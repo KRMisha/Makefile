@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+*.sln eol=crlf
+*.vcxproj* eol=crlf
