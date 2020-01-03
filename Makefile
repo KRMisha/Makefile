@@ -198,42 +198,46 @@ doc:
 # Print help information
 .PHONY: help
 help:
-	@echo "Usage: make target... [options]..."
-	@echo
-	@echo "Targets:"
-	@echo "  all             Build executable (debug mode by default)"
-	@echo "  install         Install packaged program to desktop (debug mode by default)"
-	@echo "  run             Build and run executable (debug mode by default)"
-	@echo "  copyassets      Copy assets to executable directory for selected platform"
-	@echo "  clean           Clean build and bin directories (all platforms)"
-	@echo "  cleanassets     Clean assets from executable directories (all platforms)"
-	@echo "  format          Run clang-format on source code"
-	@echo "  doc             Generate documentation with Doxygen"
-	@echo "  help            Print this information"
-	@echo "  printvars       Print Makefile variables for debugging"
-	@echo
-	@echo "Options:"
-	@echo "  release=1       Build using release configuration rather than debug"
-	@echo "  win32=1         Build for 32-bit Windows (valid when built on Windows only)"
-	@echo
-	@echo "Note: options affect all, install, run, copyassets, and printvars targets"
+	@printf "\
+	Usage: make target... [options]...\n\
+	\n\
+	Targets:\n\
+	  all             Build executable (debug mode by default) (default target)\n\
+	  install         Install packaged program to desktop (debug mode by default)\n\
+	  run             Build and run executable (debug mode by default)\n\
+	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
+	  clean           Clean build and bin directories (all platforms)\n\
+	  cleanassets     Clean assets from executable directories (all platforms)\n\
+	  format          Run clang-format on source code\n\
+	  doc             Generate documentation with Doxygen\n\
+	  help            Print this information\n\
+	  printvars       Print Makefile variables for debugging\n\
+	\n\
+	Options:\n\
+	  release=1       Run target using release configuration rather than debug\n\
+	  win32=1         Build for 32-bit Windows (valid when built on Windows only)\n\
+	\n\
+	Note: the above options affect all, install, run, copyassets, and printvars targets\n"
 
 # Print Makefile variables
 .PHONY: printvars
 printvars:
-	@echo OS: $(OS)
-	@echo EXEC: $(EXEC)
-	@echo BUILD_DIR: $(BUILD_DIR)
-	@echo BIN_DIR: $(BIN_DIR)
-	@echo INSTALL_DIR: $(INSTALL_DIR)
-	@echo SRC_DIR: $(SRC_DIR)
-	@echo SRCS: $(SRCS)
-	@echo INCLUDE_DIR: $(INCLUDE_DIR)
-	@echo INCLUDES: $(INCLUDES)
-	@echo CXX: $(CXX)
-	@echo CPPFLAGS: $(CPPFLAGS)
-	@echo CXXFLAGS: $(CXXFLAGS)
-	@echo WARNINGS: $(WARNINGS)
-	@echo LDFLAGS: $(LDFLAGS)
-	@echo LDLIBS: $(LDLIBS)
-	@echo COPY_ASSETS_SCRIPT: $(COPY_ASSETS_SCRIPT)
+	@printf "\
+	OS: $(OS)\n\
+	EXEC: $(EXEC)\n\
+	BUILD_DIR: $(BUILD_DIR)\n\
+	BIN_DIR: $(BIN_DIR)\n\
+	INSTALL_DIR: $(INSTALL_DIR)\n\
+	SRC_DIR: $(SRC_DIR)\n\
+	SRCS: $(SRCS)\n\
+	INCLUDE_DIR: $(INCLUDE_DIR)\n\
+	INCLUDES: $(INCLUDES)\n\
+	CXX: $(CXX)\n\
+	CPPFLAGS: $(CPPFLAGS)\n\
+	CXXFLAGS: $(CXXFLAGS)\n\
+	WARNINGS: $(WARNINGS)\n\
+	LDFLAGS: $(LDFLAGS)\n\
+	LDLIBS: $(LDLIBS)\n\
+	COPY_ASSETS_SCRIPT: $(COPY_ASSETS_SCRIPT)\n"
+
+# Made by Misha Krieger-Raynauld
