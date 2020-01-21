@@ -149,7 +149,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $@
 
-# Include automatically-generated dependencies
+# Include automatically generated dependencies
 -include $(DEPS)
 
 # Install packaged program
