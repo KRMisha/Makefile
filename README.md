@@ -8,7 +8,7 @@ A cross-platform C++ Makefile for any project!
 ## Table of Contents
 
 - [Features](#features)
-- [Project Hierarchy](#project-hierarchy)
+- [Project hierarchy](#project-hierarchy)
 - [Prerequisites](#prerequites)
     - [GCC & Make](#gcc-&-make)
     - [Clang-format (optional - for formatting)](#clang-format-(optional---for-formatting))
@@ -22,7 +22,7 @@ A cross-platform C++ Makefile for any project!
     - [Running](#running)
     - [Cleaning](#cleaning)
     - [Formatting](Formatting)
-    - [Generating Documentation](#generating-documentation)
+    - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
 
@@ -36,7 +36,7 @@ A cross-platform C++ Makefile for any project!
 - **Format source files** thanks to clang-format
 - **Generate documentation** from Doxygen comments
 
-## Project Hierarchy
+## Project hierarchy
 
 ```
 .
@@ -272,7 +272,7 @@ make format
 
 This will format all files in the `src` and `include` directories using clang-format according to the rules found in `.clang-format`.
 
-### Generating Documentation
+### Generating documentation
 
 #### First time use
 
