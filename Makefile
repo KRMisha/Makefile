@@ -49,7 +49,7 @@ else
 endif
 
 # OS-specific build and bin directories
-BUILD_DIR := $(BUILD_DIR)/make_$(OS)
+BUILD_DIR := $(BUILD_DIR)/$(OS)
 BIN_DIR := $(BIN_DIR)/$(OS)
 ifeq ($(OS),windows)
 	# Windows 32-bit
