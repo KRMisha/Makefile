@@ -2,8 +2,8 @@
 ##### Variables and settings
 ################################################################################
 
-# Project name
-EXEC = project
+# Executable name
+EXEC = program
 
 # Build, bin and install directories (conserve root directories for clean)
 BUILD_DIR_ROOT = build
