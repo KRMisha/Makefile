@@ -337,4 +337,4 @@ This will format all files in the `src` and `include` directories using clang-fo
 make doc
 ```
 
-This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory .
+This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory.
