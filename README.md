@@ -19,9 +19,12 @@ A cross-platform C++ Makefile for any project!
         - [Building for release](#building-for-release)
         - [Building for 32-bit (Windows-only)](#building-for-32-bit-(windows-only))
         - [Building using Clang instead of GCC](#building-using-clang-instead-of-gcc)
+    - [Copying assets](#copying-assets)
     - [Running](#running)
     - [Cleaning](#cleaning)
-    - [Formatting](Formatting)
+        - [Removing the copied assets from the current `bin` directory](#removing-the-copied-assets-from-the-current-`bin`-directory)
+        - [Removing the entire `build` and `bin` directories](#removing-the-entire-`build`-and-`bin`-directories)
+    - [Formatting](#formatting)
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
@@ -40,12 +43,16 @@ A cross-platform C++ Makefile for any project!
 
 ```
 .
+├── assets
+│   └── <assets>
 ├── bin
 │   └── linux | macos | windows32 | windows64
 │       ├── debug
-│       │   └── executable
+│       │   ├── executable
+│       │   └── <assets>
 │       └── release
-│           └── executable
+│           ├── executable
+│           └── <assets>
 ├── build
 │   └── linux | macos | windows32 | windows64
 │       ├── **/*.o
@@ -107,9 +114,9 @@ A cross-platform C++ Makefile for any project!
 - Windows:
     1. Install Mingw-w64 via [SourceForge](https://sourceforge.net/projects/mingw-w64/).
     2. Add the path to Mingw-64's `bin` folder to the Windows `PATH` environment variable.
-        > For Windows & Mingw-w64, everytime the `make` command is used in this README, you will need to use `mingw32-make` instead.
+        > For Windows & Mingw-w64, you will need to use `mingw32-make` instead of `make` each time the `make` command is used in this README.
     3. Install Git Bash by installing [Git for Windows](https://git-scm.com/downloads).
-        > For Windows, you will need to use **Git Bash** over PowerShell or cmd.exe every time the `make` command is used in this README.
+        > For Windows, you will need to use **Git Bash** over PowerShell or cmd.exe each time the `make` command is used in this README.
 
 ### Clang-format *(optional - for formatting)*
 
@@ -243,6 +250,16 @@ By default, all builds use GCC. To use another compiler, override the `CXX` vari
 make CXX=clang++
 ```
 
+### Copying assets
+
+To add files to be copied next to the executable's output location, simply add them to the `assets` directory. To copy them next to the executable, use the following command:
+
+```sh
+make copyassets
+```
+
+This will copy all the files and folders from the `assets` directory to the current `bin` directory, preserving their folder structure.
+
 ### Running
 
 ```
@@ -251,7 +268,23 @@ make run
 
 > If the executable is out of date, `make run` will first rebuild it.
 
+To run with up-to-date assets in a single command, use the following:
+
+```sh
+make copyassets run
+```
+
 ### Cleaning
+
+#### Removing the copied assets from the current `bin` directory
+
+```sh
+make cleanassets
+```
+
+This will remove all the files in the current `bin` directory except the executable.
+
+#### Removing the entire `build` and `bin` directories
 
 ```sh
 make clean
@@ -260,8 +293,15 @@ make clean
 This will remove the entire `build` and `bin` directories.
 
 To clean and rebuild in a single command, use the following:
+
 ```sh
 make clean all
+```
+
+To clean, copy assets, rebuild, and run in a single command, use the following:
+
+```sh
+make clean copyassets run
 ```
 
 ### Formatting

@@ -20,6 +20,9 @@ SRCS := $(sort $(shell find $(SRC_DIR) -name '*.cpp'))
 INCLUDE_DIR = include
 INCLUDES := -I$(INCLUDE_DIR)
 
+# Assets
+ASSETS_DIR = assets
+
 # C preprocessor settings
 CPPFLAGS := -MMD -MP $(INCLUDES)
 
@@ -85,35 +88,6 @@ ifeq ($(OS),windows)
 	endif
 endif
 
-# OS-specific assets-copying script selection
-ifeq ($(OS),windows)
-	ifeq ($(win32),1)
-		ifeq ($(release),1)
-			COPY_ASSETS_SCRIPT = copy_assets_windows32_r.sh
-		else
-			COPY_ASSETS_SCRIPT = copy_assets_windows32_d.sh
-		endif
-	else
-		ifeq ($(release),1)
-			COPY_ASSETS_SCRIPT = copy_assets_windows64_r.sh
-		else
-			COPY_ASSETS_SCRIPT = copy_assets_windows64_d.sh
-		endif
-	endif
-else ifeq ($(OS),macos)
-	ifeq ($(release),1)
-		COPY_ASSETS_SCRIPT = copy_assets_macos_r.sh
-	else
-		COPY_ASSETS_SCRIPT = copy_assets_macos_d.sh
-	endif
-else ifeq ($(OS),linux)
-	ifeq ($(release),1)
-		COPY_ASSETS_SCRIPT = copy_assets_linux_r.sh
-	else
-		COPY_ASSETS_SCRIPT = copy_assets_linux_d.sh
-	endif
-endif
-
 # Debug (default) and release modes settings
 ifeq ($(release),1)
 	BUILD_DIR := $(BUILD_DIR)/release
@@ -167,8 +141,9 @@ run: all
 # Copy assets to bin directory for selected platform
 .PHONY: copyassets
 copyassets:
-	@echo "Copying assets with script: $(COPY_ASSETS_SCRIPT)"
-	@./scripts/$(COPY_ASSETS_SCRIPT) 2> /dev/null
+	@echo "Copying assets from $(ASSETS_DIR) to $(BIN_DIR)"
+	@mkdir -p $(BIN_DIR)
+	@cp -r assets/* $(BIN_DIR)/
 
 # Clean build and bin directories for all platforms
 .PHONY: clean
@@ -181,7 +156,7 @@ clean:
 .PHONY: cleanassets
 cleanassets:
 	@echo "Cleaning assets for all platforms"
-	@./scripts/clean_assets.sh
+	@find $(BIN_DIR) -mindepth 1 ! -name $(EXEC) -delete
 
 # Run clang-format on source code
 .PHONY: format
@@ -238,6 +213,5 @@ printvars:
 	WARNINGS: $(WARNINGS)\n\
 	LDFLAGS: $(LDFLAGS)\n\
 	LDLIBS: $(LDLIBS)\n\
-	COPY_ASSETS_SCRIPT: $(COPY_ASSETS_SCRIPT)\n"
 
 # Made by Misha Krieger-Raynauld
