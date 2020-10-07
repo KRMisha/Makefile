@@ -237,7 +237,7 @@ make release=1 win32=1
 
 #### Building using Clang instead of GCC
 
-By default, all builds use GCC. To use another compiler, override the `CXX` variable when invoking `make`.
+By default, all builds use GCC. To use another compiler, override the `CXX` variable when invoking `make`. For example, to use Clang:
 
 ```sh
 make CXX=clang++
@@ -257,9 +257,9 @@ make run
 make clean
 ```
 
-This will remove the `build` and `bin` directories.
+This will remove the entire `build` and `bin` directories.
 
-To clean in rebuild in a single command, use the following:
+To clean and rebuild in a single command, use the following:
 ```sh
 make clean all
 ```
