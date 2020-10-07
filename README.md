@@ -19,8 +19,8 @@ A cross-platform C++ Makefile for any project!
         - [Building for release](#building-for-release)
         - [Building for 32-bit (Windows-only)](#building-for-32-bit-(windows-only))
         - [Building using Clang instead of GCC](#building-using-clang-instead-of-gcc)
-    - [Copying assets](#copying-assets)
     - [Running](#running)
+    - [Copying assets](#copying-assets)
     - [Cleaning](#cleaning)
         - [Removing the copied assets from the current `bin` directory](#removing-the-copied-assets-from-the-current-bin-directory)
         - [Removing the entire `build` and `bin` directories](#removing-the-entire-build-and-bin-directories)
@@ -113,7 +113,7 @@ A cross-platform C++ Makefile for any project!
     3. In the window which pops up, click "Install" and follow the instructions.
 - Windows:
     1. Install Mingw-w64 via [SourceForge](https://sourceforge.net/projects/mingw-w64/).
-    2. Add the path to Mingw-64's `bin` folder to the Windows `PATH` environment variable.
+    2. Add the path to Mingw-64's `bin` directory to Windows's system `PATH` environment variable.
         > For Windows & Mingw-w64, you will need to use `mingw32-make` instead of `make` each time the `make` command is used in this README.
     3. Install Git Bash by installing [Git for Windows](https://git-scm.com/downloads).
         > For Windows, you will need to use **Git Bash** over PowerShell or cmd.exe each time the `make` command is used in this README.
@@ -236,6 +236,7 @@ make win32=1
 ```
 
 This can also be combined with the `release=1` option:
+
 ```sh
 make release=1 win32=1
 ```
@@ -250,23 +251,35 @@ By default, all builds use GCC. To use another compiler, override the `CXX` vari
 make CXX=clang++
 ```
 
-### Copying assets
-
-To add files to be copied next to the executable's output location, simply add them to the `assets` directory. To copy them next to the executable, use the following command:
-
-```sh
-make copyassets
-```
-
-This will copy all the files and folders from the `assets` directory to the current `bin` directory, preserving their folder structure.
-
 ### Running
 
 ```
 make run
 ```
 
-> If the executable is out of date, `make run` will first rebuild it.
+This will run the executable, rebuilding it first if it was out of date.
+
+This can also be combined with the `release=1` and/or `win32=1` options to run an executable built with the same settings:
+
+```sh
+make run release=1
+```
+
+### Copying assets
+
+To add files to be copied next to the executable's output location, simply add them to the `assets` directory. To copy them next to the executable in the current `bin` directory, use the following command:
+
+```sh
+make copyassets
+```
+
+The folder structure inside `assets` will be preserved at the copied destination.
+
+This can also be combined with the `release=1` and/or `win32=1` options to copy the assets for the specific `bin` directory matching an executable built with the same settings:
+
+```sh
+make copyassets release=1
+```
 
 To run with up-to-date assets in a single command, use the following:
 
@@ -283,6 +296,12 @@ make cleanassets
 ```
 
 This will remove all the files in the current `bin` directory except the executable.
+
+This can also be combined with the `release=1` and/or `win32=1` options to clean the assets for the specific `bin` directory matching an executable built with the same settings:
+
+```sh
+make cleanassets release=1
+```
 
 #### Removing the entire `build` and `bin` directories
 
