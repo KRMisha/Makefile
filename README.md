@@ -11,8 +11,7 @@ A cross-platform C++ Makefile for any project!
 - [Project hierarchy](#project-hierarchy)
 - [Prerequisites](#prerequites)
     - [GCC & Make](#gcc-&-make)
-    - [Clang-format (optional - for formatting)](#clang-format-(optional---for-formatting))
-    - [Doxygen & Graphviz (optional - for generating documentation)](#doxygen-&-graphviz-(optional---for-generating-documentation))
+    - [Optional dependencies](#optional-dependencies)
 - [Usage](#usage)
     - [Overview of commands](#overview-of-commands)
     - [Building](#building)
@@ -82,108 +81,26 @@ A cross-platform C++ Makefile for any project!
 
 ### GCC & Make
 
-> Alternatively, Clang can be used instead of GCC. The instructions below will focus on GCC.
+> Alternatively, Clang can be used instead of GCC (see [here](#using-a-different-compiler)). The instructions below will focus on GCC.
 
 - Linux:
-    - Debian/Ubuntu:
-
-        ```sh
-        sudo apt install build-essential
-        ```
-
-    - Fedora:
-
-        ```sh
-        sudo dnf install gcc-c++ make
-        ```
-
-    - Arch:
-
-        ```sh
-        sudo pacman -S base-devel
-        ```
-
+    - Debian/Ubuntu: `sudo apt install build-essential`
+    - Fedora: `sudo dnf install gcc-c++ make`
+    - Arch: `sudo pacman -S base-devel`
 - macOS:
-    1. Open the "Terminal" application.
-    2. Run the following command:
-
-        ```sh
-        xcode-select --install
-        ```
-
-    3. In the window which pops up, click "Install" and follow the instructions.
+    1. Run the following command: `xcode-select --install`
+    2. In the window which pops up, click "Install" and follow the instructions.
 - Windows:
     1. Install Mingw-w64 via [SourceForge](https://sourceforge.net/projects/mingw-w64/).
     2. Add the path to Mingw-64's `bin` directory to Windows's system `PATH` environment variable.
-        > For Windows & Mingw-w64, you will need to use `mingw32-make` instead of `make` each time the `make` command is used in this README.
+        > You will need to use `mingw32-make` instead of `make` each time the `make` command is used in this README.
     3. Install Git Bash by installing [Git for Windows](https://git-scm.com/downloads).
-        > For Windows, you will need to use **Git Bash** over PowerShell or cmd.exe each time the `make` command is used in this README.
+        > You will need to use **Git Bash** over PowerShell or cmd.exe each time the `make` command is used in this README.
 
-### Clang-format *(optional - for formatting)*
+### Optional dependencies
 
-> This step is optional and is only needed to run the `make format` command.
-
-- Linux:
-    - Debian/Ubuntu:
-
-        ```sh
-        sudo apt install clang-format
-        ```
-
-    - Fedora:
-
-        ```sh
-        sudo dnf install clang
-        ```
-
-    - Arch:
-
-        ```sh
-        sudo pacman -S clang-format
-        ```
-
-- macOS:
-
-    Install the pre-built binary for macOS from [LLVM's downloads page](https://releases.llvm.org/download.html).
-
-- Windows:
-
-    Install the pre-built binary for Windows from [LLVM's downloads page](https://releases.llvm.org/download.html).
-
-### Doxygen & Graphviz *(optional - for generating documentation)*
-
-> This step is optional and is only needed to run the `make doc` command.
-
-- Linux:
-    - Debian/Ubuntu:
-
-        ```sh
-        sudo apt install doxygen graphviz
-        ```
-
-    - Fedora:
-
-        ```sh
-        sudo dnf install doxygen graphviz
-        ```
-
-    - Arch:
-
-        ```sh
-        sudo pacman -S doxygen graphviz
-        ```
-
-- macOS:
-    1. Doxygen: download and run the installer (.dmg) for macOS from [Doxygen's downloads page](doxygen.nl/download.html).
-    2. Graphviz:
-
-        ```sh
-        brew install graphviz
-        ```
-
-- Windows:
-    1. Doxygen: download and run the setup (.exe) for Windows from [Doxygen's downloads page](doxygen.nl/download.html).
-    2. Graphviz: install the pre-built stable package for Windows from [Graphviz's downloads page](https://graphviz.org/download/).
+- For formatting: [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- For generating documentation: [Doxygen](https://www.doxygen.nl/index.html) and [Graphviz](https://graphviz.org/)
 
 ## Usage
 
