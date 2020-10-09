@@ -146,18 +146,18 @@ copyassets:
 	@cp -r $(ASSETS_DIR)/. $(BIN_DIR)/
 	@cp -r $(ASSETS_OS_DIR)/. $(BIN_DIR)/ 2> /dev/null || :
 
+# Clean all assets from bin directories for all platforms
+.PHONY: cleanassets
+cleanassets:
+	@echo "Cleaning assets for all platforms"
+	@find $(BIN_DIR_ROOT) -mindepth 3 ! -name $(EXEC) -delete
+
 # Clean build and bin directories for all platforms
 .PHONY: clean
 clean:
 	@echo "Cleaning $(BUILD_DIR_ROOT) and $(BIN_DIR_ROOT) directories"
 	@$(RM) -r $(BUILD_DIR_ROOT)
 	@$(RM) -r $(BIN_DIR_ROOT)
-
-# Clean all assets from bin directories for all platforms
-.PHONY: cleanassets
-cleanassets:
-	@echo "Cleaning assets for all platforms"
-	@find $(BIN_DIR_ROOT) -mindepth 3 ! -name $(EXEC) -delete
 
 # Run clang-format on source code
 .PHONY: format
@@ -182,8 +182,8 @@ help:
 	  install         Install packaged program to desktop (debug mode by default)\n\
 	  run             Build and run executable (debug mode by default)\n\
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
-	  clean           Clean build and bin directories (all platforms)\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
+	  clean           Clean build and bin directories (all platforms)\n\
 	  format          Run clang-format on source code\n\
 	  doc             Generate documentation with Doxygen\n\
 	  help            Print this information\n\

@@ -117,8 +117,8 @@ Targets:
   install         Install packaged program to desktop (debug mode by default)
   run             Build and run executable (debug mode by default)
   copyassets      Copy assets to executable directory for selected platform and configuration
-  clean           Clean build and bin directories (all platforms)
   cleanassets     Clean assets from executable directories (all platforms)
+  clean           Clean build and bin directories (all platforms)
   format          Run clang-format on source code
   doc             Generate documentation with Doxygen
   help            Print this information
