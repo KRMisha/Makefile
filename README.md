@@ -32,7 +32,7 @@ A cross-platform C++ Makefile for any project!
 ## Features
 
 - **Cross-platform**: works on Linux, macOS, and Windows (32- and 64-bit)
-- **Simple**: all source files are automatically found and compiled
+- **Automatic**: all source files are automatically found and compiled
 - **Efficient**: only the modified files are recompiled and their dependencies are automatically generated
 - **Debug and release** configurations
 - **Configurable**: easily add libraries or change compilation settings
