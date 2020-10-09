@@ -5,11 +5,11 @@
 # Executable name
 EXEC = program
 
-# Build, bin and install directories (conserve root directories for clean)
+# Build, bin, assets, and install directories (bin and build root directories are kept for clean)
 BUILD_DIR_ROOT = build
-BUILD_DIR := $(BUILD_DIR_ROOT)
 BIN_DIR_ROOT = bin
-BIN_DIR := $(BIN_DIR_ROOT)
+ASSETS_DIR = assets
+ASSETS_OS_DIR := $(ASSETS_DIR)_os
 INSTALL_DIR := ~/Desktop/$(EXEC)
 
 # Sources (searches recursively inside the source directory)
@@ -19,9 +19,6 @@ SRCS := $(sort $(shell find $(SRC_DIR) -name '*.cpp'))
 # Includes
 INCLUDE_DIR = include
 INCLUDES := -I$(INCLUDE_DIR)
-
-# Assets
-ASSETS_DIR = assets
 
 # C preprocessor settings
 CPPFLAGS := -MMD -MP $(INCLUDES)
@@ -51,18 +48,21 @@ else
 	endif
 endif
 
-# OS-specific build and bin directories
-BUILD_DIR := $(BUILD_DIR)/$(OS)
-BIN_DIR := $(BIN_DIR)/$(OS)
+# OS-specific build, bin, and assets directories
+BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
+BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
+ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
 ifeq ($(OS),windows)
 	# Windows 32-bit
 	ifeq ($(win32),1)
 		BUILD_DIR := $(BUILD_DIR)32
 		BIN_DIR := $(BIN_DIR)32
+		ASSETS_OS_DIR := $(ASSETS_OS_DIR)32
 	# Windows 64-bit
 	else
 		BUILD_DIR := $(BUILD_DIR)64
 		BIN_DIR := $(BIN_DIR)64
+		ASSETS_OS_DIR := $(ASSETS_OS_DIR)64
 	endif
 endif
 
@@ -141,9 +141,10 @@ run: all
 # Copy assets to bin directory for selected platform
 .PHONY: copyassets
 copyassets:
-	@echo "Copying assets from $(ASSETS_DIR) to $(BIN_DIR)"
+	@echo "Copying assets from $(ASSETS_DIR) and $(ASSETS_OS_DIR) to $(BIN_DIR)"
 	@mkdir -p $(BIN_DIR)
-	@cp -r assets/* $(BIN_DIR)/
+	@cp -r $(ASSETS_DIR)/. $(BIN_DIR)/
+	@cp -r $(ASSETS_OS_DIR)/. $(BIN_DIR)/ 2> /dev/null || :
 
 # Clean build and bin directories for all platforms
 .PHONY: clean
@@ -202,6 +203,8 @@ printvars:
 	EXEC: $(EXEC)\n\
 	BUILD_DIR: $(BUILD_DIR)\n\
 	BIN_DIR: $(BIN_DIR)\n\
+	ASSETS_DIR: $(ASSETS_DIR)\n\
+	ASSETS_OS_DIR: $(ASSETS_OS_DIR)\n\
 	INSTALL_DIR: $(INSTALL_DIR)\n\
 	SRC_DIR: $(SRC_DIR)\n\
 	SRCS: $(SRCS)\n\

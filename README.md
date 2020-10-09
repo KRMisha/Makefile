@@ -17,10 +17,10 @@ A cross-platform C++ Makefile for any project!
     - [Building](#building)
         - [Using a different compiler](#using-a-different-compiler)
     - [Running](#running)
-    - [Copying assets](#copying-assets)
+    - [Assets](#assets)
+        - [Copying assets](#copying-assets)
+        - [Cleaning assets](#cleaning-assets)
     - [Cleaning](#cleaning)
-        - [Removing the copied assets from all `bin` directories](#removing-the-copied-assets-from-all-bin-directories)
-        - [Removing the entire `build` and `bin` directories](#removing-the-entire-build-and-bin-directories)
     - [Options](#options)
         - [Release](#release)
         - [32-bit (Windows only)](#32-bit-(windows-only))
@@ -46,6 +46,9 @@ A cross-platform C++ Makefile for any project!
 .
 ├── assets
 │   └── <assets>
+├── assets_os
+│   └── linux | macos | windows32 | windows64
+│       └── <assets>
 ├── bin
 │   └── linux | macos | windows32 | windows64
 │       └── debug | release
@@ -152,7 +155,9 @@ make run
 
 This will run the executable, rebuilding it first if it was out of date.
 
-### Copying assets
+### Assets
+
+#### Copying assets
 
 To add files to be copied next to the executable's output location, simply add them to the `assets` directory. Then, use the following command:
 
@@ -162,21 +167,26 @@ make copyassets
 
 This will copy the contents of `assets` to the current `bin` directory, preserving their folder structure.
 
-### Cleaning
+If you have certain assets which you wish to only copy for certain platforms, you can do the following:
+1. Create an `assets_os/<platform>` directory at the root of the project. The `<project>` directory should be named either `linux`, `macos`, `windows32`, or `windows64` based on the desired platform for the assets.
+2. Inside this new directory, add all the assets to be copied only for this platform.
+3. Use the `make copyassets` command as usual. The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
 
-#### Removing the copied assets from all `bin` directories
+#### Cleaning assets
 
 ```sh
 make cleanassets
 ```
 
-This will remove all the files in all `bin` directories except the executable.
+This will remove all the files in all `bin` directories except the executables.
 
-#### Removing the entire `build` and `bin` directories
+### Cleaning
 
 ```sh
 make clean
 ```
+
+This will remove the entire `build` and `bin` directories.
 
 ### Options
 
