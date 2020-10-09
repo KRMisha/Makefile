@@ -212,6 +212,6 @@ printvars:
 	CXXFLAGS: $(CXXFLAGS)\n\
 	WARNINGS: $(WARNINGS)\n\
 	LDFLAGS: $(LDFLAGS)\n\
-	LDLIBS: $(LDLIBS)\n\
+	LDLIBS: $(LDLIBS)\n"
 
 # Made by Misha Krieger-Raynauld (https://github.com/KRMisha/Makefile)
