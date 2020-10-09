@@ -47,16 +47,14 @@ A cross-platform C++ Makefile for any project!
 │   └── <assets>
 ├── bin
 │   └── linux | macos | windows32 | windows64
-│       ├── debug
-│       │   ├── executable
-│       │   └── <assets>
-│       └── release
+│       └── debug | release
 │           ├── executable
 │           └── <assets>
 ├── build
 │   └── linux | macos | windows32 | windows64
-│       ├── **/*.o
-│       └── **/*.d
+│       └── debug | release
+│           ├── **/*.o
+│           └── **/*.d
 ├── doc
 │   ├── Doxyfile
 │   └── **/*.html
