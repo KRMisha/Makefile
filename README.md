@@ -28,6 +28,7 @@ A cross-platform C++ Makefile for any project!
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
+- [License](#license)
 
 ## Features
 
@@ -241,3 +242,7 @@ make doc
 ```
 
 This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory.
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
