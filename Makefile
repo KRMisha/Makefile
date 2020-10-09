@@ -1,5 +1,5 @@
 ################################################################################
-##### Variables and settings
+#### Variables and settings
 ################################################################################
 
 # Executable name
@@ -105,7 +105,7 @@ OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 ################################################################################
-##### Targets
+#### Targets
 ################################################################################
 
 .PHONY: all
@@ -214,4 +214,4 @@ printvars:
 	LDFLAGS: $(LDFLAGS)\n\
 	LDLIBS: $(LDLIBS)\n\
 
-# Made by Misha Krieger-Raynauld
+# Made by Misha Krieger-Raynauld (https://github.com/KRMisha/Makefile)
