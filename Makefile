@@ -156,7 +156,7 @@ clean:
 .PHONY: cleanassets
 cleanassets:
 	@echo "Cleaning assets for all platforms"
-	@find $(BIN_DIR) -mindepth 1 ! -name $(EXEC) -delete
+	@find $(BIN_DIR_ROOT) -mindepth 3 ! -name $(EXEC) -delete
 
 # Run clang-format on source code
 .PHONY: format

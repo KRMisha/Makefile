@@ -19,7 +19,7 @@ A cross-platform C++ Makefile for any project!
     - [Running](#running)
     - [Copying assets](#copying-assets)
     - [Cleaning](#cleaning)
-        - [Removing the copied assets from the current `bin` directory](#removing-the-copied-assets-from-the-current-bin-directory)
+        - [Removing the copied assets from all `bin` directories](#removing-the-copied-assets-from-all-bin-directories)
         - [Removing the entire `build` and `bin` directories](#removing-the-entire-build-and-bin-directories)
     - [Options](#options)
         - [Release](#release)
@@ -164,13 +164,13 @@ This will copy the contents of `assets` to the current `bin` directory, preservi
 
 ### Cleaning
 
-#### Removing the copied assets from the current `bin` directory
+#### Removing the copied assets from all `bin` directories
 
 ```sh
 make cleanassets
 ```
 
-This will remove all the files in the current `bin` directory except the executable.
+This will remove all the files in all `bin` directories except the executable.
 
 #### Removing the entire `build` and `bin` directories
 
@@ -180,7 +180,7 @@ make clean
 
 ### Options
 
-Certain options can be specified when building, running, and copying or cleaning assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
+Certain options can be specified when building, running, and copying assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
 
 #### Release
 
@@ -190,7 +190,7 @@ By default, builds are in debug mode. To build for release (including optimizati
 make release=1
 ```
 
-To use the `release` version of the executable, `release=1` must also be specified when running, or copying/cleaning assets. For example:
+To use the `release` version of the executable, `release=1` must also be specified when running or when copying assets. For example:
 
 ```sh
 make copyassets run release=1
@@ -206,7 +206,7 @@ make win32=1
 
 This can also be combined with the `release=1` option to build for 32-bit release.
 
-> Don't forget to also specify `win32=1` when running or dealing with assets!
+> Don't forget to also specify `win32=1` when running or when copying assets!
 
 ### Formatting
 
