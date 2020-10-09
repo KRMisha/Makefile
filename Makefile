@@ -48,24 +48,6 @@ else
 	endif
 endif
 
-# OS-specific build, bin, and assets directories
-BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
-BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
-ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
-ifeq ($(OS),windows)
-	# Windows 32-bit
-	ifeq ($(win32),1)
-		BUILD_DIR := $(BUILD_DIR)32
-		BIN_DIR := $(BIN_DIR)32
-		ASSETS_OS_DIR := $(ASSETS_OS_DIR)32
-	# Windows 64-bit
-	else
-		BUILD_DIR := $(BUILD_DIR)64
-		BIN_DIR := $(BIN_DIR)64
-		ASSETS_OS_DIR := $(ASSETS_OS_DIR)64
-	endif
-endif
-
 # OS-specific compilation and linking settings
 ifeq ($(OS),windows)
 	# Add .exe extension to executable
@@ -85,6 +67,24 @@ ifeq ($(OS),windows)
 	# 64-bit flags
 	else
 		CXXFLAGS += -m64
+	endif
+endif
+
+# OS-specific build, bin, and assets directories
+BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
+BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
+ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
+ifeq ($(OS),windows)
+	# Windows 32-bit
+	ifeq ($(win32),1)
+		BUILD_DIR := $(BUILD_DIR)32
+		BIN_DIR := $(BIN_DIR)32
+		ASSETS_OS_DIR := $(ASSETS_OS_DIR)32
+	# Windows 64-bit
+	else
+		BUILD_DIR := $(BUILD_DIR)64
+		BIN_DIR := $(BIN_DIR)64
+		ASSETS_OS_DIR := $(ASSETS_OS_DIR)64
 	endif
 endif
 
