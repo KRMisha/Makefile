@@ -16,14 +16,15 @@ A cross-platform C++ Makefile for any project!
 - [Usage](#usage)
     - [Overview of commands](#overview-of-commands)
     - [Building](#building)
-        - [Building for release](#building-for-release)
-        - [Building for 32-bit (Windows-only)](#building-for-32-bit-(windows-only))
-        - [Building using Clang instead of GCC](#building-using-clang-instead-of-gcc)
+        - [Using a different compiler](#using-a-different-compiler)
     - [Running](#running)
     - [Copying assets](#copying-assets)
     - [Cleaning](#cleaning)
         - [Removing the copied assets from the current `bin` directory](#removing-the-copied-assets-from-the-current-bin-directory)
         - [Removing the entire `build` and `bin` directories](#removing-the-entire-build-and-bin-directories)
+    - [Options](#options)
+        - [Release](#release)
+        - [32-bit (Windows only)](#32-bit-(windows-only))
     - [Formatting](#formatting)
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
@@ -219,31 +220,7 @@ make
 
 This will compile the executable and output it inside the `bin` directory. This is equivalent to `make all`.
 
-#### Building for release
-
-By default, builds are in debug mode. To build for release (including optimizations), add the `release=1` option when invoking `make`.
-
-```sh
-make release=1
-```
-
-#### Building for 32-bit (Windows-only)
-
-By default, builds on Windows are 64-bit. To build a 32-bit executable, add the `win32=1` option when invoking `make`.
-
-```sh
-make win32=1
-```
-
-This can also be combined with the `release=1` option:
-
-```sh
-make release=1 win32=1
-```
-
-> 
-
-#### Building using Clang instead of GCC
+#### Using a different compiler
 
 By default, all builds use GCC. To use another compiler, override the `CXX` variable when invoking `make`. For example, to use Clang:
 
@@ -259,33 +236,15 @@ make run
 
 This will run the executable, rebuilding it first if it was out of date.
 
-This can also be combined with the `release=1` and/or `win32=1` options to run an executable built with the same settings:
-
-```sh
-make run release=1
-```
-
 ### Copying assets
 
-To add files to be copied next to the executable's output location, simply add them to the `assets` directory. To copy them next to the executable in the current `bin` directory, use the following command:
+To add files to be copied next to the executable's output location, simply add them to the `assets` directory. Then, use the following command:
 
 ```sh
 make copyassets
 ```
 
-The folder structure inside `assets` will be preserved at the copied destination.
-
-This can also be combined with the `release=1` and/or `win32=1` options to copy the assets for the specific `bin` directory matching an executable built with the same settings:
-
-```sh
-make copyassets release=1
-```
-
-To run with up-to-date assets in a single command, use the following:
-
-```sh
-make copyassets run
-```
+This will copy the contents of `assets` to the current `bin` directory, preserving their folder structure.
 
 ### Cleaning
 
@@ -297,31 +256,41 @@ make cleanassets
 
 This will remove all the files in the current `bin` directory except the executable.
 
-This can also be combined with the `release=1` and/or `win32=1` options to clean the assets for the specific `bin` directory matching an executable built with the same settings:
-
-```sh
-make cleanassets release=1
-```
-
 #### Removing the entire `build` and `bin` directories
 
 ```sh
 make clean
 ```
 
-This will remove the entire `build` and `bin` directories.
+### Options
 
-To clean and rebuild in a single command, use the following:
+Certain options can be specified when building, running, and copying or cleaning assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
 
-```sh
-make clean all
-```
+#### Release
 
-To clean, copy assets, rebuild, and run in a single command, use the following:
+By default, builds are in debug mode. To build for release (including optimizations), add the `release=1` option when invoking `make`.
 
 ```sh
-make clean copyassets run
+make release=1
 ```
+
+To use the `release` version of the executable, `release=1` must also be specified when running, or copying/cleaning assets. For example:
+
+```sh
+make copyassets run release=1
+```
+
+#### 32-bit (Windows only)
+
+By default, builds on Windows target 64-bit. To build a 32-bit executable, add the `win32=1` option when invoking `make`.
+
+```sh
+make win32=1
+```
+
+This can also be combined with the `release=1` option to build for 32-bit release.
+
+> Don't forget to also specify `win32=1` when running or dealing with assets!
 
 ### Formatting
 
