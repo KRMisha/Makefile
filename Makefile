@@ -199,22 +199,22 @@ help:
 .PHONY: printvars
 printvars:
 	@printf "\
-	OS: $(OS)\n\
-	EXEC: $(EXEC)\n\
-	BUILD_DIR: $(BUILD_DIR)\n\
-	BIN_DIR: $(BIN_DIR)\n\
-	ASSETS_DIR: $(ASSETS_DIR)\n\
-	ASSETS_OS_DIR: $(ASSETS_OS_DIR)\n\
-	INSTALL_DIR: $(INSTALL_DIR)\n\
-	SRC_DIR: $(SRC_DIR)\n\
-	SRCS: $(SRCS)\n\
-	INCLUDE_DIR: $(INCLUDE_DIR)\n\
-	INCLUDES: $(INCLUDES)\n\
-	CXX: $(CXX)\n\
-	CPPFLAGS: $(CPPFLAGS)\n\
-	CXXFLAGS: $(CXXFLAGS)\n\
-	WARNINGS: $(WARNINGS)\n\
-	LDFLAGS: $(LDFLAGS)\n\
-	LDLIBS: $(LDLIBS)\n"
+	OS: \"$(OS)\"\n\
+	EXEC: \"$(EXEC)\"\n\
+	BUILD_DIR: \"$(BUILD_DIR)\"\n\
+	BIN_DIR: \"$(BIN_DIR)\"\n\
+	ASSETS_DIR: \"$(ASSETS_DIR)\"\n\
+	ASSETS_OS_DIR: \"$(ASSETS_OS_DIR)\"\n\
+	INSTALL_DIR: \"$(INSTALL_DIR)\"\n\
+	SRC_DIR: \"$(SRC_DIR)\"\n\
+	SRCS: \"$(SRCS)\"\n\
+	INCLUDE_DIR: \"$(INCLUDE_DIR)\"\n\
+	INCLUDES: \"$(INCLUDES)\"\n\
+	CXX: \"$(CXX)\"\n\
+	CPPFLAGS: \"$(CPPFLAGS)\"\n\
+	CXXFLAGS: \"$(CXXFLAGS)\"\n\
+	WARNINGS: \"$(WARNINGS)\"\n\
+	LDFLAGS: \"$(LDFLAGS)\"\n\
+	LDLIBS: \"$(LDLIBS)\"\n"
 
 # Made by Misha Krieger-Raynauld (https://github.com/KRMisha/Makefile)
