@@ -21,7 +21,7 @@ INCLUDE_DIR = include
 INCLUDES := -I$(INCLUDE_DIR)
 
 # C preprocessor settings
-CPPFLAGS := -MMD -MP $(INCLUDES)
+CPPFLAGS = $(INCLUDES) -MMD -MP
 
 # C++ compiler settings
 CXX = g++
@@ -48,11 +48,8 @@ else
 	endif
 endif
 
-# OS-specific compilation and linking settings
+# OS-specific settings
 ifeq ($(OS),windows)
-	# Add .exe extension to executable
-	EXEC := $(EXEC).exe
-
 	# Link everything statically on Windows (including libgcc and libstdc++)
 	LDFLAGS += -static
 
@@ -61,11 +58,48 @@ ifeq ($(OS),windows)
 		LDFLAGS += -mwindows
 	endif
 
-	# 32-bit flags
+	# Windows 32- and 64-bit common settings
+	INCLUDES +=
+	LDFLAGS +=
+	LDLIBS +=
+
 	ifeq ($(win32),1)
-		CXXFLAGS += -m32
-	# 64-bit flags
+		# Windows 32-bit settings
+		INCLUDES +=
+		LDFLAGS +=
+		LDLIBS +=
 	else
+		# Windows 64-bit settings
+		INCLUDES +=
+		LDFLAGS +=
+		LDLIBS +=
+	endif
+else ifeq ($(OS),macos)
+	# Mac-specific settings
+	INCLUDES +=
+	LDFLAGS +=
+	LDLIBS +=
+else ifeq ($(OS),linux)
+	# Linux-specific settings
+	INCLUDES +=
+	LDFLAGS +=
+	LDLIBS +=
+endif
+
+################################################################################
+#### Final setup
+################################################################################
+
+# Windows-specific default settings
+ifeq ($(OS),windows)
+	# Add .exe extension to executable
+	EXEC := $(EXEC).exe
+
+	ifeq ($(win32),1)
+		# Compile for 32-bit
+		CXXFLAGS += -m32
+	else
+		# Compile for 64-bit
 		CXXFLAGS += -m64
 	endif
 endif
