@@ -3,32 +3,8 @@
 </p>
 
 # Makefile
+
 A cross-platform C++ Makefile for any project!
-
-## Table of Contents
-
-- [Features](#features)
-- [Project hierarchy](#project-hierarchy)
-- [Prerequisites](#prerequites)
-    - [GCC & Make](#gcc-&-make)
-    - [Optional dependencies](#optional-dependencies)
-- [Usage](#usage)
-    - [Overview of commands](#overview-of-commands)
-    - [Building](#building)
-        - [Using a different compiler](#using-a-different-compiler)
-    - [Running](#running)
-    - [Assets](#assets)
-        - [Copying assets](#copying-assets)
-        - [Cleaning assets](#cleaning-assets)
-    - [Cleaning](#cleaning)
-    - [Options](#options)
-        - [Release](#release)
-        - [32-bit (Windows only)](#32-bit-(windows-only))
-    - [Formatting](#formatting)
-    - [Generating documentation](#generating-documentation)
-        - [First time use](#first-time-use)
-        - [Updating the documentation](#updating-the-documentation)
-- [License](#license)
 
 ## Features
 
@@ -40,44 +16,7 @@ A cross-platform C++ Makefile for any project!
 - **Format source files** thanks to clang-format
 - **Generate documentation** from Doxygen comments
 
-## Project hierarchy
-
-```
-.
-├── assets
-│   └── <assets>
-├── assets_os
-│   └── linux | macos | windows32 | windows64
-│       └── <assets>
-├── bin
-│   └── linux | macos | windows32 | windows64
-│       └── debug | release
-│           ├── executable
-│           └── <assets>
-├── build
-│   └── linux | macos | windows32 | windows64
-│       └── debug | release
-│           ├── **/*.o
-│           └── **/*.d
-├── doc
-│   ├── Doxyfile
-│   └── **/*.html
-├── include
-│   └── **/*.h
-├── libs
-│   └── <external library name>
-│       ├── bin
-│       ├── include
-│       └── lib
-├── src
-│   ├── main.cpp
-│   └── **/*.cpp
-├── .clang-format
-├── .gitattributes
-├── .gitignore
-├── Makefile
-└── README.md
-```
+See the [table of contents](#table-of-contents) at the end.
 
 ## Prerequisites
 
@@ -253,6 +192,70 @@ make doc
 
 This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory.
 
+## Project hierarchy
+
+```
+.
+├── assets
+│   └── <assets>
+├── assets_os
+│   └── linux | macos | windows32 | windows64
+│       └── <assets>
+├── bin
+│   └── linux | macos | windows32 | windows64
+│       └── debug | release
+│           ├── executable
+│           └── <assets>
+├── build
+│   └── linux | macos | windows32 | windows64
+│       └── debug | release
+│           ├── **/*.o
+│           └── **/*.d
+├── doc
+│   ├── Doxyfile
+│   └── **/*.html
+├── include
+│   └── **/*.h
+├── libs
+│   └── <external library name>
+│       ├── bin
+│       ├── include
+│       └── lib
+├── src
+│   ├── main.cpp
+│   └── **/*.cpp
+├── .clang-format
+├── .gitattributes
+├── .gitignore
+├── Makefile
+└── README.md
+```
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
+
+## Table of contents
+
+- [Features](#features)
+- [Prerequisites](#prerequites)
+    - [GCC & Make](#gcc-&-make)
+    - [Optional dependencies](#optional-dependencies)
+- [Usage](#usage)
+    - [Overview of commands](#overview-of-commands)
+    - [Building](#building)
+        - [Using a different compiler](#using-a-different-compiler)
+    - [Running](#running)
+    - [Assets](#assets)
+        - [Copying assets](#copying-assets)
+        - [Cleaning assets](#cleaning-assets)
+    - [Cleaning](#cleaning)
+    - [Options](#options)
+        - [Release](#release)
+        - [32-bit (Windows only)](#32-bit-(windows-only))
+    - [Formatting](#formatting)
+    - [Generating documentation](#generating-documentation)
+        - [First time use](#first-time-use)
+        - [Updating the documentation](#updating-the-documentation)
+- [Project hierarchy](#project-hierarchy)
+- [License](#license)
