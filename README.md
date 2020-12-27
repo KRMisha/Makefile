@@ -298,6 +298,8 @@ All the configurable options are defined between lines 1-87. For most uses, the 
 
 [MIT](https://opensource.org/licenses/MIT)
 
+To comply with the terms of the MIT license in your project, simply copy-pasting the entire contents of the provided [`LICENSE`](LICENSE) file as a comment at the top of the Makefile is sufficient. By doing so, you do not need to include the `LICENSE` file directly since it is is now contained in the Makefile. You can then reuse the `LICENSE` filename for your own license if you wish.
+
 ## Table of contents
 
 - [Features](#features)
