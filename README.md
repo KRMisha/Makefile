@@ -169,7 +169,7 @@ This will format all files in the `src` and `include` directories using clang-fo
 
 #### First time use
 
-1. Create a new `doc` folder at the root of the project.
+1. Create a new `doc` directory at the root of the project.
 2. Generate a new Doxyfile in `doc/Doxyfile`:
 
     ```sh
@@ -191,6 +191,69 @@ make doc
 ```
 
 This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory.
+
+## Configuration
+
+### Adding a library
+
+1. Create a new `libs` directory at the root of the project if this is the first library to be added to your project. Conversely, if you have previously added a library, this directory will already exist.
+2. Inside the `libs` directory, create a `<library-name>` subdirectory to contain the library's files.
+3. Download the necessary files for your chosen library and add them to `libs/<library-name>`.
+
+    Depending on the type of library (e.g. traditional vs header-only), the folder structure inside `libs/<library-name>` will vary. Refer to your chosen library's documentation for more information.
+
+4. Include the library's header files: add `-Ilibs/<library-name>/include` to the `INCLUDES` variable at line 21 of the Makefile.
+
+    The `include` part of the path above refers to a directory containing all the library's header files. Note that he actual location of the header files will depend on the layout of the library files you added in step 3 and may thus be named differently. For a header-only library, for example, the header files may be directly located in `libs/<library-name>`.
+
+5. Specify the library's compiled files: add `-Llibs/<library-name>/lib` to the `LDFLAGS` variable at line 32 of the Makefile.
+
+    The `lib` part of the path above refers to a directory containing all the library's compiled files (`.so`, `.a`, `.lib`, `.framework`, or any type of file depending on the platform). Just like in step 4, it's important to note that the actual location of the compiled files will depend on the layout of the library you added in step 3 and may thus be named differently.
+
+    For a header-only library, this step is not needed as no library files need to be linked.
+
+    You may also have chosen to build the library from source in step 3. In that case, the `lib` directory should contain the output of the compiled library. Refer to your library's documentation for more information.
+
+6. Add the library's name to link it during compilation: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
+
+    Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
+
+    For a header-only library, this step is not needed as no library files need to be linked.
+
+    > Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
+
+Everything should now be good to go!
+
+#### Platform-specific library configuration
+
+The steps above show how to configure a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in many cases, the library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
+- Adding a library needed only for code enabled on a certain platform
+- Using `-framework` over `-l` to link a library on macOS
+- Specifying a different path for a library's compiled files with `-L`
+
+The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
+
+Lines 51-87 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
+
+> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-87.
+
+### Frequently changed settings
+
+In addition to adding libraries, you may wish to tweak the Makefile's configuration. The following table presents an overview of the most commonly changed settings of the Makefile.
+
+| Configuration                                                                             | Variable                          | Line  |
+|-------------------------------------------------------------------------------------------|-----------------------------------|-------|
+| Change the output executable name                                                         | `EXEC`                            | 6     |
+| Select the C++ compiler (e.g. `g++` or `clang++`)                                         | `CXX`                             | 27    |
+| Add preprocessor settings (e.g. `-D<macro-name>`)                                         | `CPPFLAGS`                        | 24    |
+| Change C++ compiler settings (useful for setting C++ version)                             | `CXXFLAGS`                        | 28    |
+| Add/remove compilation warnings                                                           | `WARNINGS`                        | 29    |
+| Add includes for libraries common to all platforms (e.g. `-Ilibs/<library-name>/include`) | `INCLUDES`                        | 21    |
+| Add linker flags for libraries common to all platforms (e.g. `-Llibs/<library-name>/lib`) | `LDFLAGS`                         | 32    |
+| Add libraries common to all platforms (e.g. `-l<library-name>`)                           | `LDLIBS`                          | 35    |
+| Add includes/linker flags/libraries for specific platforms                                | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-87 |
+
+All the configurable options are defined between lines 1-87. For most uses, the Makefile should not need to be modified beyond line 87.
 
 ## Project hierarchy
 
@@ -257,5 +320,9 @@ This will generate the documentation according to the rules found in `doc/Doxyfi
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
+- [Configuration](#configuration)
+    - [Adding a library](#adding-a-library)
+        - [Platform-specific library configuration](#platform-specific-library-configuration)
+    - [Frequently changed settings](#frequently-changed-settings)
 - [Project hierarchy](#project-hierarchy)
 - [License](#license)
