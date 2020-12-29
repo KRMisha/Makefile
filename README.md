@@ -111,6 +111,8 @@ If you have certain assets which you wish to only copy for certain platforms, yo
 2. Inside this new directory, add all the assets to be copied only for this platform.
 3. Use the `make copyassets` command as usual. The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
 
+> The `assets_os` directory is useful for holding Windows DLLs which need to be copied next to the executable (using `assets_os/windows64` or `assets_os/windows32`, depending on the target version).
+
 #### Cleaning assets
 
 ```sh
@@ -204,7 +206,7 @@ This will generate the documentation according to the rules found in `doc/Doxyfi
 
 4. Include the library's header files: add `-Ilibs/<library-name>/include` to the `INCLUDES` variable at line 21 of the Makefile.
 
-    The `include` part of the path above refers to a directory containing all the library's header files. Note that he actual location of the header files will depend on the layout of the library files you added in step 3 and may thus be named differently. For a header-only library, for example, the header files may be directly located in `libs/<library-name>`.
+    The `include` part of the path above refers to a directory containing all the library's header files. Note that the actual location of the header files will depend on the layout of the library files you added in step 3 and may thus be named differently. For a header-only library, for example, the header files may be directly located in `libs/<library-name>`.
 
 5. Specify the library's compiled files: add `-Llibs/<library-name>/lib` to the `LDFLAGS` variable at line 32 of the Makefile.
 
