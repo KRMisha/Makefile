@@ -50,8 +50,8 @@ endif
 
 # OS-specific settings
 ifeq ($(OS),windows)
-	# Link everything statically on Windows (including libgcc and libstdc++)
-	LDFLAGS += -static
+	# Link libgcc and libstdc++ statically on Windows
+	LDFLAGS += -static-libgcc -static-libstdc++
 
 	# Disable console output on release builds
 	ifeq ($(release),1)
