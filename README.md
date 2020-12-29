@@ -198,6 +198,8 @@ This will generate the documentation according to the rules found in `doc/Doxyfi
 
 ### Adding a library
 
+> Note: steps 1-5 are not needed if the library's development package has been installed in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. If this is the case, only step 6 needs to be followed to link the library (if the library is not header-only).
+
 1. Create a new `libs` directory at the root of the project if this is the first library to be added to your project. Conversely, if you have previously added a library, this directory will already exist.
 2. Inside the `libs` directory, create a `<library-name>` subdirectory to contain the library's files.
 3. Download the necessary files for your chosen library and add them to `libs/<library-name>`.
