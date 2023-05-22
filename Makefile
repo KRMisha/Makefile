@@ -197,7 +197,7 @@ clean:
 .PHONY: format
 format:
 	@echo "Running clang-format"
-	@clang-format -i $$(find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.inl')
+	@clang-format -i $$(find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl')
 
 # Generate documentation with Doxygen
 .PHONY: doc
