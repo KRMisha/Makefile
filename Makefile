@@ -200,10 +200,10 @@ format:
 	@clang-format -i $$(find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl')
 
 # Generate documentation with Doxygen
-.PHONY: doc
-doc:
+.PHONY: docs
+docs:
 	@echo "Generating documentation"
-	@doxygen doc/Doxyfile
+	@doxygen docs/Doxyfile
 
 # Print help information
 .PHONY: help
@@ -219,7 +219,7 @@ help:
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
 	  clean           Clean build and bin directories (all platforms)\n\
 	  format          Run clang-format on source code\n\
-	  doc             Generate documentation with Doxygen\n\
+	  docs            Generate documentation with Doxygen\n\
 	  help            Print this information\n\
 	  printvars       Print Makefile variables for debugging\n\
 	\n\

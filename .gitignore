@@ -7,8 +7,8 @@ Thumbs.db
 /bin/
 
 # Documentation
-/doc/*
-!/doc/Doxyfile
+/docs/*
+!/docs/Doxyfile
 
 # VS Code
 .vscode/*

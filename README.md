@@ -59,7 +59,7 @@ Targets:
   cleanassets     Clean assets from executable directories (all platforms)
   clean           Clean build and bin directories (all platforms)
   format          Run clang-format on source code
-  doc             Generate documentation with Doxygen
+  docs            Generate documentation with Doxygen
   help            Print this information
   printvars       Print Makefile variables for debugging
 
@@ -171,28 +171,28 @@ This will format all files in the `src` and `include` directories using clang-fo
 
 #### First time use
 
-1. Create a new `doc` directory at the root of the project.
-2. Generate a new Doxyfile in `doc/Doxyfile`:
+1. Create a new `docs` directory at the root of the project.
+2. Generate a new Doxyfile in `docs/Doxyfile`:
 
     ```sh
-    cd doc
+    cd docs
     doxygen -g
     ```
 
     Or, to use the graphical wizard instead:
 
     ```sh
-    cd doc
+    cd docs
     doxywizard
     ```
 
 #### Updating the documentation
 
 ```sh
-make doc
+make docs
 ```
 
-This will generate the documentation according to the rules found in `doc/Doxyfile` and output it in the `doc` directory.
+This will generate the documentation according to the rules found in `docs/Doxyfile` and output it in the `docs` directory.
 
 ## Configuration
 
@@ -278,7 +278,7 @@ All the configurable options are defined between lines 1-87. For most uses, the 
 │       └── debug | release
 │           ├── **/*.o
 │           └── **/*.d
-├── doc
+├── docs
 │   ├── Doxyfile
 │   └── **/*.html
 ├── include
