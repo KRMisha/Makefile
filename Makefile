@@ -164,13 +164,13 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 .PHONY: install
 install: all copyassets
 	@echo "Packaging program to $(INSTALL_DIR)"
-	@mkdir -p $(INSTALL_DIR); cp -r $(BIN_DIR)/. $(INSTALL_DIR)
+	@mkdir -p $(INSTALL_DIR) && cp -r $(BIN_DIR)/. $(INSTALL_DIR)
 
 # Build and run
 .PHONY: run
 run: all
 	@echo "Starting program: $(BIN_DIR)/$(EXEC)"
-	@cd ./$(BIN_DIR); ./$(EXEC)
+	@cd $(BIN_DIR) && ./$(EXEC)
 
 # Copy assets to bin directory for selected platform
 .PHONY: copyassets
