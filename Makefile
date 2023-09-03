@@ -194,7 +194,7 @@ compdb: $(BUILD_DIR_ROOT)/compile_commands.json
 
 # Generate JSON compilation database (compile_commands.json) by merging fragments
 $(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
-	@echo "Generating $@"
+	@echo "Generating: $@"
 	@mkdir -p $(@D)
 	@printf "[\n" > $@
 	@sed -e '$$s/$$/,/' -s $(COMPDBS) | sed -e '$$s/,$$//' -e 's/^/    /' >> $@
