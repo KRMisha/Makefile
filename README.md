@@ -16,6 +16,7 @@ A cross-platform C++ Makefile for any project!
 - **Format source files** thanks to clang-format
 - **Generate documentation** from Doxygen comments
 - Built-in generation of `compile_commands.json`
+- Compatible with VS Code's [Makefile Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.makefile-tools)
 
 See the [table of contents](#table-of-contents) at the end.
 
