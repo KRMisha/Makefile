@@ -15,6 +15,7 @@ A cross-platform C++ Makefile for any project!
 - **Configurable**: easily add libraries or change compilation settings
 - **Format source files** thanks to clang-format
 - **Generate documentation** from Doxygen comments
+- Built-in generation of `compile_commands.json`
 
 See the [table of contents](#table-of-contents) at the end.
 
@@ -58,6 +59,7 @@ Targets:
   copyassets      Copy assets to executable directory for selected platform and configuration
   cleanassets     Clean assets from executable directories (all platforms)
   clean           Clean build and bin directories (all platforms)
+  compdb          Generate JSON compilation database (compile_commands.json)
   format          Run clang-format on source code
   docs            Generate documentation with Doxygen
   help            Print this information
@@ -67,7 +69,7 @@ Options:
   release=1       Run target using release configuration rather than debug
   win32=1         Build for 32-bit Windows (valid when built on Windows only)
 
-Note: the above options affect all, install, run, copyassets, and printvars targets
+Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets
 ```
 
 ### Building
@@ -158,6 +160,16 @@ make win32=1
 This can also be combined with the `release=1` option to build for 32-bit release.
 
 > Don't forget to also specify `win32=1` when running or when copying assets!
+
+#### Generating a JSON compilation database
+
+Some language servers and tools, like clangd or clang-tidy, rely on a [JSON compilation database](https://clang.llvm.org/docs/JSONCompilationDatabase.html) (`compile_commands.json`). To generate this file, use the following command:
+
+```sh
+make compdb
+```
+
+This will create the compilation database in `build/compile_commands.json`.
 
 ### Formatting
 
@@ -322,6 +334,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Options](#options)
         - [Release](#release)
         - [32-bit (Windows only)](#32-bit-(windows-only))
+    - [Generating a JSON compilation database](#generating-a-json-compilation-database)
     - [Formatting](#formatting)
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)

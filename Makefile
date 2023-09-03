@@ -137,6 +137,7 @@ endif
 # Objects and dependencies
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
+COMPDBS := $(OBJS:.o=.json)
 
 ################################################################################
 #### Targets
@@ -193,6 +194,27 @@ clean:
 	@$(RM) -r $(BUILD_DIR_ROOT)
 	@$(RM) -r $(BIN_DIR_ROOT)
 
+.PHONY: compdb
+compdb: $(BUILD_DIR_ROOT)/compile_commands.json
+
+# Generate JSON compilation database (compile_commands.json) by merging fragments
+$(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
+	@echo "Generating $@"
+	@mkdir -p $(@D)
+	@printf "[\n" > $@
+	@sed -e '$$s/$$/,/' -s $(COMPDBS) | sed -e '$$s/,$$//' -e 's/^/    /' >> $@
+	@printf "]\n" >> $@
+
+# Generate JSON compilation database fragments from source files
+$(BUILD_DIR)/%.json: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	@printf "\
+	{\n\
+	    \"directory\": \"$(CURDIR)\",\n\
+	    \"command\": \"$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $(basename $@).o\",\n\
+	    \"file\": \"$<\"\n\
+	}\n" > $@
+
 # Run clang-format on source code
 .PHONY: format
 format:
@@ -218,6 +240,7 @@ help:
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
 	  clean           Clean build and bin directories (all platforms)\n\
+	  compdb          Generate JSON compilation database (compile_commands.json)\n\
 	  format          Run clang-format on source code\n\
 	  docs            Generate documentation with Doxygen\n\
 	  help            Print this information\n\
@@ -227,7 +250,7 @@ help:
 	  release=1       Run target using release configuration rather than debug\n\
 	  win32=1         Build for 32-bit Windows (valid when built on Windows only)\n\
 	\n\
-	Note: the above options affect all, install, run, copyassets, and printvars targets\n"
+	Note: the above options affect all, install, run, copyassets, compdb, and printvars targets\n"
 
 # Print Makefile variables
 .PHONY: printvars
