@@ -53,11 +53,6 @@ ifeq ($(OS),windows)
 	# Link libgcc and libstdc++ statically on Windows
 	LDFLAGS += -static-libgcc -static-libstdc++
 
-	# Disable console output on release builds
-	ifeq ($(release),1)
-		LDFLAGS += -mwindows
-	endif
-
 	# Windows 32- and 64-bit common settings
 	INCLUDES +=
 	LDFLAGS +=
