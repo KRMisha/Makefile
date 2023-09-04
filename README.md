@@ -207,70 +207,223 @@ make docs
 
 This will generate the documentation according to the rules found in `docs/Doxyfile` and output it in the `docs` directory.
 
-## Configuration
+## Adding libraries
 
-### Adding a library
+There are several ways to add a library to your project.
 
-> Note: steps 1-5 are not needed if the library's development package has been installed in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. If this is the case, only step 6 needs to be followed to link the library (if the library is not header-only).
+### Using a package manager
 
-1. Create a new `libs` directory at the root of the project if this is the first library to be added to your project. Conversely, if you have previously added a library, this directory will already exist.
-2. Inside the `libs` directory, create a `<library-name>` subdirectory to contain the library's files.
-3. Download the necessary files for your chosen library and add them to `libs/<library-name>`.
+For more complex projects, using a package manager is the recommended way to add libraries. This method ensures that your libraries are managed identically across platforms.
 
-    Depending on the type of library (e.g. traditional vs header-only), the folder structure inside `libs/<library-name>` will vary. Refer to your chosen library's documentation for more information.
+#### [vcpkg](https://vcpkg.io/en/)
 
-4. Include the library's header files: add `-Ilibs/<library-name>/include` to the `INCLUDES` variable at line 21 of the Makefile.
+You can integrate vcpkg with the Makefile by using the [manual integration](https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/manual-integration).
 
-    The `include` part of the path above refers to a directory containing all the library's header files. Note that the actual location of the header files will depend on the layout of the library files you added in step 3 and may thus be named differently. For a header-only library, for example, the header files may be directly located in `libs/<library-name>`.
+1. Add vcpkg as a submodule:
 
-5. Specify the library's compiled files: add `-Llibs/<library-name>/lib` to the `LDFLAGS` variable at line 32 of the Makefile.
+    ```sh
+    git submodule add https://github.com/Microsoft/vcpkg.git
+    ```
 
-    The `lib` part of the path above refers to a directory containing all the library's compiled files (`.so`, `.a`, `.lib`, `.framework`, or any type of file depending on the platform). Just like in step 4, it's important to note that the actual location of the compiled files will depend on the layout of the library you added in step 3 and may thus be named differently.
+2. Run the bootstrap script to build vcpkg:
 
-    For a header-only library, this step is not needed as no library files need to be linked.
+    ```sh
+    ./vcpkg/bootstrap-vcpkg.sh
+    ```
 
-    You may also have chosen to build the library from source in step 3. In that case, the `lib` directory should contain the output of the compiled library. Refer to your library's documentation for more information.
+3. Create a `vcpkg.json` at the root of the project:
 
-6. Add the library's name to link it during compilation: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
+    ```jsonc
+    {
+        "dependencies": [
+            // Add dependencies...
+        ]
+    }
+    ```
+
+4. Install the dependencies listed in `vcpkg.json`:
+
+    ```sh
+    ./vcpkg/vcpkg install
+    ```
+
+5. Edit the Makefile:
+
+    ```makefile
+    # OS-specific settings
+    ifeq ($(OS),windows)
+        [...]
+
+        ifeq ($(win32),1)
+            # Windows 32-bit settings
+            INCLUDES += -Ivcpkg/installed/x86-windows/include
+            LDFLAGS += -Lvcpkg/installed/x86-windows/lib
+            LDLIBS += # Add libraries with -l...
+        else
+            # Windows 64-bit settings
+            INCLUDES += -Ivcpkg/installed/x86-windows/include
+            LDFLAGS += -Lvcpkg/installed/x86-windows/lib
+            LDLIBS += # Add libraries with -l...
+        endif
+    else ifeq ($(OS),macos)
+        # Mac-specific settings
+        INCLUDES += -Ivcpkg/installed/x64-osx/include
+        LDFLAGS += -Lvcpkg/installed/x64-osx/lib
+        LDLIBS += # Add libraries with -l...
+    else ifeq ($(OS),linux)
+        # Linux-specific settings
+        INCLUDES += -Ivcpkg/installed/x64-linux/include
+        LDFLAGS += -Lvcpkg/installed/x64-linux/lib
+        LDLIBS += # Add libraries with -l...
+    endif
+    ```
+
+See [this gist](https://gist.github.com/KRMisha/7c19c73b2833f54f2d84bc7bb3ae788c) for an example of the modifications to make.
+
+#### [Conan](https://conan.io/)
+
+You can integrate Conan with the Makefile by using the [MakeDeps generator](https://docs.conan.io/2/reference/tools/gnu/makedeps.html).
+
+1. Install Conan using `pip`:
+
+    ```sh
+    pip install conan
+    ```
+
+2. Create a Conan profile:
+
+    ```sh
+    conan profile detect --force
+    ```
+
+    The path of the generated profile can be found using `conan profile path default`. You can edit this file and set `compiler.cppstd` to your desired C++ standard.
+
+3. Create a `conanfile.txt` at the root of the project:
+
+    ```ini
+    [requires]
+    # Add dependencies...
+
+    [generators]
+    MakeDeps
+    ```
+
+4. Edit the Makefile:
+
+    ```makefile
+    # Conan
+    CONAN_DEFINE_FLAG = -D
+    CONAN_INCLUDE_DIR_FLAG = -I
+    CONAN_LIB_DIR_FLAG = -L
+    CONAN_BIN_DIR_FLAG = -L
+    CONAN_LIB_FLAG = -l
+    CONAN_SYSTEM_LIB_FLAG = -l
+    include $(BUILD_DIR_ROOT)/conandeps.mk
+    [...]
+    # Includes
+    INCLUDE_DIR = include
+    INCLUDES := -I$(INCLUDE_DIR) $(CONAN_INCLUDE_DIRS)
+
+    # C preprocessor settings
+    CPPFLAGS = $(INCLUDES) -MMD -MP $(CONAN_DEFINES)
+    [...]
+    # Linker flags
+    LDFLAGS = $(CONAN_LIB_DIRS)
+
+    # Libraries to link
+    LDLIBS = $(CONAN_LIBS) $(CONAN_SYSTEM_LIBS)
+    [...]
+    # Generate Conan dependencies
+    $(BUILD_DIR_ROOT)/conandeps.mk: conanfile.txt
+        @echo "Generating: $@"
+        @conan install . --output-folder=build --build=missing
+    ```
+
+See [this gist](https://gist.github.com/KRMisha/99099d3c38efb038ff3b39e3c1bd6880) for an example of the modifications to make.
+
+### Header-only library
+
+Header-only libraries are composed solely of header files. This way, no separate compilation or linking is necessary.
+
+1. If this is the first library you are adding, create a new `external` directory at the root of the project.
+2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's header files.
+3. Download the library's header files and add them to `external/<library-name>`.
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable at line 21 of the Makefile.
+
+### Library installed system-wide
+
+Some libraries can be installed system-wide, using your system's package manager. For example:
+- On macOS, using [Homebrew](https://brew.sh/) or [MacPorts](https://www.macports.org/)
+- On Debian/Ubuntu, using `apt`
+- On Fedora, using `dnf`
+- On Arch Linux, using `pacman`
+
+These system package managers install dependencies in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. Some important system-wide libraries may also come preinstalled on your system.
+
+Relying on a system package manager for your libraries can make it less straightforward for developers across platforms to start working on your project. Nevertheless, they can be a quick way to start using a library, especially if this library is already required by the system.
+
+1. Use your system package manager to install the library's development package. Often, these will have the `-dev` or `-devel` suffix.
+2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
 
     Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
 
-    For a header-only library, this step is not needed as no library files need to be linked.
+    Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
 
-    > Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
+### Library built from source
 
-Everything should now be good to go!
+Alternatively, if the library is not available in any package manager, you can build it from source or download its compiled artifacts and add them to your project.
 
-#### Platform-specific library configuration
+1. If this is the first library you are adding, create a new `external` directory at the root of the project.
+2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's files.
+3. Build or download the library's compiled files and add them to `external/<library-name>`.
 
-The steps above show how to configure a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in many cases, the library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
+    You may wish to instead add the library as a Git submodule inside the `external` directory to make updates easier.
+
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable at line 21 of the Makefile.
+5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable at line 32 of the Makefile.
+6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
+
+    Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
+
+    Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
+
+Note that the folder structure inside `external/<library-name>` will vary from one library to the next. In these instructions:
+- The `include` subdirectory refers to a directory containing all of the library's header files.
+- The `lib` subdirectory refers to a directory containing all of the library's compiled files (e.g. `.so`, `.a`, `.lib`, `.framework`, etc.). If you have chosen to build the library from source, you should copy the output of the compiled library to the `lib` directory.
+These directories may be named differently: refer to your library's documentation for more information.
+
+## Configuration
+
+### Frequently changed settings
+
+The following table presents an overview of the most commonly changed settings of the Makefile:
+
+| Configuration                                                                                 | Variable                          | Line  |
+|-----------------------------------------------------------------------------------------------|-----------------------------------|-------|
+| Change the output executable name                                                             | `EXEC`                            | 6     |
+| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                             | 27    |
+| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                        | 24    |
+| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                        | 28    |
+| Add/remove compilation warnings                                                               | `WARNINGS`                        | 29    |
+| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 21    |
+| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 32    |
+| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 35    |
+| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-82 |
+
+All the configurable options are defined between lines 1-82. For most uses, the Makefile should not need to be modified beyond line 82.
+
+### Platform-specific library configuration
+
+The previous sections explain how to configure a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in some cases, the library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
 - Adding a library needed only for code enabled on a certain platform
 - Using `-framework` over `-l` to link a library on macOS
 - Specifying a different path for a library's compiled files with `-L`
 
 The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
 
-Lines 51-87 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
+Lines 51-82 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
 
-> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-87.
-
-### Frequently changed settings
-
-In addition to adding libraries, you may wish to tweak the Makefile's configuration. The following table presents an overview of the most commonly changed settings of the Makefile.
-
-| Configuration                                                                             | Variable                          | Line  |
-|-------------------------------------------------------------------------------------------|-----------------------------------|-------|
-| Change the output executable name                                                         | `EXEC`                            | 6     |
-| Select the C++ compiler (e.g. `g++` or `clang++`)                                         | `CXX`                             | 27    |
-| Add preprocessor settings (e.g. `-D<macro-name>`)                                         | `CPPFLAGS`                        | 24    |
-| Change C++ compiler settings (useful for setting C++ version)                             | `CXXFLAGS`                        | 28    |
-| Add/remove compilation warnings                                                           | `WARNINGS`                        | 29    |
-| Add includes for libraries common to all platforms (e.g. `-Ilibs/<library-name>/include`) | `INCLUDES`                        | 21    |
-| Add linker flags for libraries common to all platforms (e.g. `-Llibs/<library-name>/lib`) | `LDFLAGS`                         | 32    |
-| Add libraries common to all platforms (e.g. `-l<library-name>`)                           | `LDLIBS`                          | 35    |
-| Add includes/linker flags/libraries for specific platforms                                | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-87 |
-
-All the configurable options are defined between lines 1-87. For most uses, the Makefile should not need to be modified beyond line 87.
+> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-82.
 
 ## Project hierarchy
 
@@ -296,11 +449,6 @@ All the configurable options are defined between lines 1-87. For most uses, the 
 │   └── **/*.html
 ├── include
 │   └── **/*.h
-├── libs
-│   └── <external library name>
-│       ├── bin
-│       ├── include
-│       └── lib
 ├── src
 │   ├── main.cpp
 │   └── **/*.cpp
@@ -340,9 +488,15 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
+- [Adding libraries](#adding-libraries)
+    - [Using a package manager](#using-a-package-manager)
+        - [vcpkg](#vcpkg)
+        - [Conan](#conan)
+    - [Header-only library](#header-only-library)
+    - [Library installed system-wide](#library-installed-system-wide)
+    - [Library built from source](#library-built-from-source)
 - [Configuration](#configuration)
-    - [Adding a library](#adding-a-library)
-        - [Platform-specific library configuration](#platform-specific-library-configuration)
     - [Frequently changed settings](#frequently-changed-settings)
+    - [Platform-specific library configuration](#platform-specific-library-configuration)
 - [Project hierarchy](#project-hierarchy)
 - [License](#license)
