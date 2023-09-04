@@ -256,24 +256,24 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
 
         ifeq ($(win32),1)
             # Windows 32-bit settings
-            INCLUDES += -Ivcpkg/installed/x86-windows/include
-            LDFLAGS += -Lvcpkg/installed/x86-windows/lib
+            INCLUDES += -Ivcpkg_installed/x86-windows/include
+            LDFLAGS += -Lvcpkg_installed/x86-windows/lib
             LDLIBS += # Add libraries with -l...
         else
             # Windows 64-bit settings
-            INCLUDES += -Ivcpkg/installed/x86-windows/include
-            LDFLAGS += -Lvcpkg/installed/x86-windows/lib
+            INCLUDES += -Ivcpkg_installed/x86-windows/include
+            LDFLAGS += -Lvcpkg_installed/x86-windows/lib
             LDLIBS += # Add libraries with -l...
         endif
     else ifeq ($(OS),macos)
         # Mac-specific settings
-        INCLUDES += -Ivcpkg/installed/x64-osx/include
-        LDFLAGS += -Lvcpkg/installed/x64-osx/lib
+        INCLUDES += -Ivcpkg_installed/x64-osx/include
+        LDFLAGS += -Lvcpkg_installed/x64-osx/lib
         LDLIBS += # Add libraries with -l...
     else ifeq ($(OS),linux)
         # Linux-specific settings
-        INCLUDES += -Ivcpkg/installed/x64-linux/include
-        LDFLAGS += -Lvcpkg/installed/x64-linux/lib
+        INCLUDES += -Ivcpkg_installed/x64-linux/include
+        LDFLAGS += -Lvcpkg_installed/x64-linux/lib
         LDLIBS += # Add libraries with -l...
     endif
     ```
