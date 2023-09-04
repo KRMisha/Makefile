@@ -162,7 +162,7 @@ This can also be combined with the `release=1` option to build for 32-bit releas
 
 > Don't forget to also specify `win32=1` when running or when copying assets!
 
-#### Generating a JSON compilation database
+### Generating a JSON compilation database
 
 Some language servers and tools, like clangd or clang-tidy, rely on a [JSON compilation database](https://clang.llvm.org/docs/JSONCompilationDatabase.html) (`compile_commands.json`). To generate this file, use the following command:
 
