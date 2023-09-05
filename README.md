@@ -13,7 +13,8 @@ A cross-platform C++ Makefile for any project!
 - **Efficient**: only the modified files are recompiled and their dependencies are automatically generated
 - **Debug and release** configurations
 - **Configurable**: easily add libraries or change compilation settings
-- **Format source files** thanks to clang-format
+- **Formatting** with clang-format
+- **Linting** with clang-tidy
 - **Generate documentation** from Doxygen comments
 - Built-in generation of `compile_commands.json`
 - Compatible with VS Code's [Makefile Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.makefile-tools)
@@ -43,6 +44,7 @@ See the [table of contents](#table-of-contents) at the end.
 ### Optional dependencies
 
 - For formatting: [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- For linting: [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 - For generating documentation: [Doxygen](https://www.doxygen.nl/index.html) and [Graphviz](https://graphviz.org/)
 
 ## Usage
@@ -61,7 +63,9 @@ Targets:
   cleanassets     Clean assets from executable directories (all platforms)
   clean           Clean build and bin directories (all platforms)
   compdb          Generate JSON compilation database (compile_commands.json)
-  format          Run clang-format on source code
+  format          Format source code using clang-format
+  lint            Lint source code using clang-tidy
+  lintfix         Lint and fix source code using clang-tidy
   docs            Generate documentation with Doxygen
   help            Print this information
   printvars       Print Makefile variables for debugging
@@ -178,7 +182,21 @@ This will create the compilation database in `build/compile_commands.json`.
 make format
 ```
 
-This will format all files in the `src` and `include` directories using clang-format according to the rules found in `.clang-format`.
+This will format all files in the `src` and `include` directories using clang-format according to the options set in `.clang-format`.
+
+### Linting
+
+```sh
+make lint
+```
+
+This will lint all files in the `src` and `include` directories using clang-tidy according to the options set in `.clang-tidy`.
+
+```sh
+make lintfix
+```
+
+This will apply the suggested fixes to errors found by clang-tidy.
 
 ### Generating documentation
 
@@ -453,6 +471,7 @@ Lines 51-82 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 │   ├── main.cpp
 │   └── **/*.cpp
 ├── .clang-format
+├── .clang-tidy
 ├── .gitattributes
 ├── .gitignore
 ├── Makefile
@@ -485,6 +504,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
         - [32-bit (Windows only)](#32-bit-(windows-only))
     - [Generating a JSON compilation database](#generating-a-json-compilation-database)
     - [Formatting](#formatting)
+    - [Linting](#linting)
     - [Generating documentation](#generating-documentation)
         - [First time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)

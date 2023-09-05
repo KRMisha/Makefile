@@ -134,6 +134,9 @@ OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 COMPDBS := $(OBJS:.o=.json)
 
+# All files (sources and headers)
+FILES := $(shell find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl')
+
 ################################################################################
 #### Targets
 ################################################################################
@@ -214,7 +217,19 @@ $(BUILD_DIR)/%.json: $(SRC_DIR)/%.cpp
 .PHONY: format
 format:
 	@echo "Running clang-format"
-	@clang-format -i $$(find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl')
+	@clang-format -i $(FILES)
+
+# Run clang-tidy on source code
+.PHONY: lint
+lint: compdb
+	@echo "Running clang-tidy"
+	@clang-tidy -p $(BUILD_DIR_ROOT) $(FILES)
+
+# Run clang-tidy on source code and fix found errors
+.PHONY: lintfix
+lintfix: compdb
+	@echo "Running clang-tidy -fix"
+	@clang-tidy -p $(BUILD_DIR_ROOT) -fix $(FILES)
 
 # Generate documentation with Doxygen
 .PHONY: docs
@@ -236,7 +251,9 @@ help:
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
 	  clean           Clean build and bin directories (all platforms)\n\
 	  compdb          Generate JSON compilation database (compile_commands.json)\n\
-	  format          Run clang-format on source code\n\
+	  format          Format source code using clang-format\n\
+	  lint            Lint source code using clang-tidy\n\
+	  lintfix         Lint and fix source code using clang-tidy\n\
 	  docs            Generate documentation with Doxygen\n\
 	  help            Print this information\n\
 	  printvars       Print Makefile variables for debugging\n\
@@ -245,7 +262,7 @@ help:
 	  release=1       Run target using release configuration rather than debug\n\
 	  win32=1         Build for 32-bit Windows (valid when built on Windows only)\n\
 	\n\
-	Note: the above options affect all, install, run, copyassets, compdb, and printvars targets\n"
+	Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets\n"
 
 # Print Makefile variables
 .PHONY: printvars
