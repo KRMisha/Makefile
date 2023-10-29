@@ -284,7 +284,7 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
             LDLIBS += # Add libraries with -l...
         endif
     else ifeq ($(OS),macos)
-        # Mac-specific settings
+        # macOS-specific settings
         INCLUDES += -Ivcpkg_installed/x64-osx/include
         LDFLAGS += -Lvcpkg_installed/x64-osx/lib
         LDLIBS += # Add libraries with -l...

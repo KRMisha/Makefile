@@ -70,7 +70,7 @@ ifeq ($(OS),windows)
 		LDLIBS +=
 	endif
 else ifeq ($(OS),macos)
-	# Mac-specific settings
+	# macOS-specific settings
 	INCLUDES +=
 	LDFLAGS +=
 	LDLIBS +=
