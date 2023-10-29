@@ -79,7 +79,7 @@ Note: the above options affect the all, install, run, copyassets, compdb, and pr
 
 ### Building
 
-```
+```sh
 make
 ```
 
@@ -95,7 +95,7 @@ make CXX=clang++
 
 ### Running
 
-```
+```sh
 make run
 ```
 
