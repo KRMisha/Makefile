@@ -10,6 +10,9 @@ Thumbs.db
 /docs/*
 !/docs/Doxyfile
 
+# clangd
+.cache/
+
 # VS Code
 .vscode/*
 !.vscode/settings.json
