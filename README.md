@@ -64,6 +64,7 @@ Targets:
   clean           Clean build and bin directories (all platforms)
   compdb          Generate JSON compilation database (compile_commands.json)
   format          Format source code using clang-format
+  format-check    Check that source code is formatted using clang-format
   lint            Lint source code using clang-tidy
   lint-fix        Lint and fix source code using clang-tidy
   docs            Generate documentation with Doxygen
@@ -183,6 +184,12 @@ make format
 ```
 
 This will format all files in the `src` and `include` directories using clang-format according to the options set in `.clang-format`.
+
+To only verify if the files are correctly formatted, use the following command:
+
+```sh
+make format-check
+```
 
 ### Linting
 
