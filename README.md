@@ -65,7 +65,7 @@ Targets:
   compdb          Generate JSON compilation database (compile_commands.json)
   format          Format source code using clang-format
   lint            Lint source code using clang-tidy
-  lintfix         Lint and fix source code using clang-tidy
+  lint-fix        Lint and fix source code using clang-tidy
   docs            Generate documentation with Doxygen
   help            Print this information
   printvars       Print Makefile variables for debugging
@@ -192,11 +192,11 @@ make lint
 
 This will lint all files in the `src` and `include` directories using clang-tidy according to the options set in `.clang-tidy`.
 
-```sh
-make lintfix
-```
+To apply the suggested fixes to errors found by clang-tidy, use the following command:
 
-This will apply the suggested fixes to errors found by clang-tidy.
+```sh
+make lint-fix
+```
 
 ### Generating documentation
 
