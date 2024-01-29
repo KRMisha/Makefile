@@ -229,7 +229,7 @@ format-check:
 .PHONY: lint
 lint: compdb
 	@echo "Running clang-tidy"
-	@clang-tidy -p $(BUILD_DIR_ROOT) $(FILES)
+	@clang-tidy -p $(BUILD_DIR_ROOT) --warnings-as-errors='*' $(FILES)
 
 # Run clang-tidy on source code and fix found errors
 .PHONY: lint-fix
