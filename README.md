@@ -1,5 +1,5 @@
 <p align="center">
-    <img height=128 src="https://github.com/isocpp/logos/blob/master/cpp_logo.png?raw=true" />
+    <img height=128 src="https://github.com/isocpp/logos/blob/master/cpp_logo.png?raw=true" alt="C++ logo" />
 </p>
 
 # Makefile
@@ -51,7 +51,7 @@ See the [table of contents](#table-of-contents) at the end.
 
 ### Overview of commands
 
-```
+```console
 $ make help
 Usage: make target... [options]...
 
@@ -115,6 +115,7 @@ make copyassets
 This will copy the contents of `assets` to the current `bin` directory, preserving their folder structure.
 
 If you have certain assets which you wish to only copy for certain platforms, you can do the following:
+
 1. Create an `assets_os/<platform>` directory at the root of the project. The `<platform>` directory should be named either `linux`, `macos`, `windows32`, or `windows64` based on the desired platform for the assets.
 2. Inside this new directory, add all the assets to be copied only for this platform.
 3. Use the `make copyassets` command as usual. The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
@@ -378,6 +379,7 @@ Header-only libraries are composed solely of header files. This way, no separate
 ### Library installed system-wide
 
 Some libraries can be installed system-wide, using your system's package manager. For example:
+
 - On macOS, using [Homebrew](https://brew.sh/) or [MacPorts](https://www.macports.org/)
 - On Debian/Ubuntu, using `apt`
 - On Fedora, using `dnf`
@@ -413,8 +415,10 @@ Alternatively, if the library is not available in any package manager, you can b
     Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
 
 Note that the folder structure inside `external/<library-name>` will vary from one library to the next. In these instructions:
+
 - The `include` subdirectory refers to a directory containing all of the library's header files.
 - The `lib` subdirectory refers to a directory containing all of the library's compiled files (e.g. `.so`, `.a`, `.lib`, `.framework`, etc.). If you have chosen to build the library from source, you should copy the output of the compiled library to the `lib` directory.
+
 These directories may be named differently: refer to your library's documentation for more information.
 
 ## Configuration
@@ -440,6 +444,7 @@ All the configurable options are defined between lines 1-82. For most uses, the 
 ### Platform-specific library configuration
 
 The previous sections explain how to configure a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in some cases, the library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
+
 - Adding a library needed only for code enabled on a certain platform
 - Using `-framework` over `-l` to link a library on macOS
 - Specifying a different path for a library's compiled files with `-L`
@@ -452,7 +457,7 @@ Lines 51-82 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 
 ## Project hierarchy
 
-```
+```text
 .
 ├── assets
 │   └── <assets>
@@ -494,8 +499,8 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
 ## Table of contents
 
 - [Features](#features)
-- [Prerequisites](#prerequites)
-    - [GCC & Make](#gcc-&-make)
+- [Prerequisites](#prerequisites)
+    - [GCC \& Make](#gcc--make)
     - [Optional dependencies](#optional-dependencies)
 - [Usage](#usage)
     - [Overview of commands](#overview-of-commands)
@@ -508,7 +513,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Cleaning](#cleaning)
     - [Options](#options)
         - [Release](#release)
-        - [32-bit (Windows only)](#32-bit-(windows-only))
+        - [32-bit (Windows only)](#32-bit-windows-only)
     - [Generating a JSON compilation database](#generating-a-json-compilation-database)
     - [Formatting](#formatting)
     - [Linting](#linting)
@@ -527,3 +532,4 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Platform-specific library configuration](#platform-specific-library-configuration)
 - [Project hierarchy](#project-hierarchy)
 - [License](#license)
+- [Table of contents](#table-of-contents)
