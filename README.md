@@ -8,7 +8,7 @@ A cross-platform C++ Makefile for any project!
 
 ## Features
 
-- **Cross-platform**: works on Linux, macOS, and Windows (32- and 64-bit)
+- **Cross-platform**: works on Linux, macOS, and Windows
 - **Automatic**: all source files are automatically found and compiled
 - **Efficient**: only the modified files are recompiled and their dependencies are automatically generated
 - **Debug and release** configurations
@@ -73,7 +73,6 @@ Targets:
 
 Options:
   release=1       Run target using release configuration rather than debug
-  win32=1         Build for 32-bit Windows (valid when built on Windows only)
 
 Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets
 ```
@@ -116,11 +115,11 @@ This will copy the contents of `assets` to the current `bin` directory, preservi
 
 If you have certain assets which you wish to only copy for certain platforms, you can do the following:
 
-1. Create an `assets_os/<platform>` directory at the root of the project. The `<platform>` directory should be named either `linux`, `macos`, `windows32`, or `windows64` based on the desired platform for the assets.
+1. Create an `assets_os/<platform>` directory at the root of the project. The `<platform>` directory should be named either `linux`, `macos`, or `windows` based on the desired platform for the assets.
 2. Inside this new directory, add all the assets to be copied only for this platform.
 3. Use the `make copyassets` command as usual. The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
 
-> The `assets_os` directory is useful for holding Windows DLLs which need to be copied next to the executable (using `assets_os/windows64` or `assets_os/windows32`, depending on the target version).
+> The `assets_os` directory is useful for holding Windows DLLs which need to be copied next to the executable (using `assets_os/windows`).
 
 #### Cleaning assets
 
@@ -155,18 +154,6 @@ To use the `release` version of the executable, `release=1` must also be specifi
 ```sh
 make copyassets run release=1
 ```
-
-#### 32-bit (Windows only)
-
-By default, builds on Windows target 64-bit. To build a 32-bit executable, add the `win32=1` option when invoking `make`.
-
-```sh
-make win32=1
-```
-
-This can also be combined with the `release=1` option to build for 32-bit release.
-
-> Don't forget to also specify `win32=1` when running or when copying assets!
 
 ### Generating a JSON compilation database
 
@@ -280,17 +267,10 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
     ifeq ($(OS),windows)
         [...]
 
-        ifeq ($(win32),1)
-            # Windows 32-bit settings
-            INCLUDES += -Ivcpkg_installed/x86-windows/include
-            LDFLAGS += -Lvcpkg_installed/x86-windows/lib
-            LDLIBS += # Add libraries with -l...
-        else
-            # Windows 64-bit settings
-            INCLUDES += -Ivcpkg_installed/x86-windows/include
-            LDFLAGS += -Lvcpkg_installed/x86-windows/lib
-            LDLIBS += # Add libraries with -l...
-        endif
+        # Windows-specific settings
+        INCLUDES += -Ivcpkg_installed/x64-windows/include
+        LDFLAGS += -Lvcpkg_installed/x64-windows/lib
+        LDLIBS += # Add libraries with -l...
     else ifeq ($(OS),macos)
         # macOS-specific settings
         INCLUDES += -Ivcpkg_installed/x64-osx/include
@@ -437,9 +417,9 @@ The following table presents an overview of the most commonly changed settings o
 | Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 21    |
 | Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 32    |
 | Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 35    |
-| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-82 |
+| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-70 |
 
-All the configurable options are defined between lines 1-82. For most uses, the Makefile should not need to be modified beyond line 82.
+All the configurable options are defined between lines 1-70. For most uses, the Makefile should not need to be modified beyond line 70.
 
 ### Platform-specific library configuration
 
@@ -451,9 +431,9 @@ The previous sections explain how to configure a library using the common `INCLU
 
 The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
 
-Lines 51-82 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
+Lines 51-70 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
 
-> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-82.
+> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-70.
 
 ## Project hierarchy
 
@@ -462,15 +442,15 @@ Lines 51-82 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 ├── assets
 │   └── <assets>
 ├── assets_os
-│   └── linux | macos | windows32 | windows64
+│   └── linux | macos | windows
 │       └── <assets>
 ├── bin
-│   └── linux | macos | windows32 | windows64
+│   └── linux | macos | windows
 │       └── debug | release
 │           ├── executable
 │           └── <assets>
 ├── build
-│   └── linux | macos | windows32 | windows64
+│   └── linux | macos | windows
 │       └── debug | release
 │           ├── **/*.o
 │           └── **/*.d
@@ -513,7 +493,6 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Cleaning](#cleaning)
     - [Options](#options)
         - [Release](#release)
-        - [32-bit (Windows only)](#32-bit-windows-only)
     - [Generating a JSON compilation database](#generating-a-json-compilation-database)
     - [Formatting](#formatting)
     - [Linting](#linting)

@@ -53,22 +53,10 @@ ifeq ($(OS),windows)
 	# Link libgcc and libstdc++ statically on Windows
 	LDFLAGS += -static-libgcc -static-libstdc++
 
-	# Windows 32- and 64-bit common settings
+	# Windows-specific settings
 	INCLUDES +=
 	LDFLAGS +=
 	LDLIBS +=
-
-	ifeq ($(win32),1)
-		# Windows 32-bit settings
-		INCLUDES +=
-		LDFLAGS +=
-		LDLIBS +=
-	else
-		# Windows 64-bit settings
-		INCLUDES +=
-		LDFLAGS +=
-		LDLIBS +=
-	endif
 else ifeq ($(OS),macos)
 	# macOS-specific settings
 	INCLUDES +=
@@ -85,37 +73,15 @@ endif
 #### Final setup
 ################################################################################
 
-# Windows-specific default settings
+# Add .exe extension to executable on Windows
 ifeq ($(OS),windows)
-	# Add .exe extension to executable
 	EXEC := $(EXEC).exe
-
-	ifeq ($(win32),1)
-		# Compile for 32-bit
-		CXXFLAGS += -m32
-	else
-		# Compile for 64-bit
-		CXXFLAGS += -m64
-	endif
 endif
 
 # OS-specific build, bin, and assets directories
 BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
 BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
 ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
-ifeq ($(OS),windows)
-	# Windows 32-bit
-	ifeq ($(win32),1)
-		BUILD_DIR := $(BUILD_DIR)32
-		BIN_DIR := $(BIN_DIR)32
-		ASSETS_OS_DIR := $(ASSETS_OS_DIR)32
-	# Windows 64-bit
-	else
-		BUILD_DIR := $(BUILD_DIR)64
-		BIN_DIR := $(BIN_DIR)64
-		ASSETS_OS_DIR := $(ASSETS_OS_DIR)64
-	endif
-endif
 
 # Debug (default) and release modes settings
 ifeq ($(release),1)
@@ -267,7 +233,6 @@ help:
 	\n\
 	Options:\n\
 	  release=1       Run target using release configuration rather than debug\n\
-	  win32=1         Build for 32-bit Windows (valid when built on Windows only)\n\
 	\n\
 	Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets\n"
 
