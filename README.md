@@ -13,6 +13,7 @@ A cross-platform C++ Makefile for any project!
 - **Efficient**: only the modified files are recompiled and their dependencies are automatically generated
 - **Debug and release** configurations
 - **Configurable**: easily add libraries or change compilation settings
+- **Package manager**-compatible (Conan and vcpkg)
 - **Formatting** with clang-format
 - **Linting** with clang-tidy
 - **Generate documentation** from Doxygen comments
@@ -228,64 +229,6 @@ There are several ways to add a library to your project.
 
 For more complex projects, using a package manager is the recommended way to add libraries. This method ensures that your libraries are managed identically across platforms.
 
-#### [vcpkg](https://vcpkg.io/en/)
-
-You can integrate vcpkg with the Makefile by using the [manual integration](https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/manual-integration).
-
-1. Add vcpkg as a submodule:
-
-    ```sh
-    git submodule add https://github.com/Microsoft/vcpkg.git
-    ```
-
-2. Run the bootstrap script to build vcpkg:
-
-    ```sh
-    ./vcpkg/bootstrap-vcpkg.sh
-    ```
-
-3. Create a `vcpkg.json` at the root of the project:
-
-    ```jsonc
-    {
-        "dependencies": [
-            // Add dependencies...
-        ]
-    }
-    ```
-
-4. Install the dependencies listed in `vcpkg.json`:
-
-    ```sh
-    ./vcpkg/vcpkg install
-    ```
-
-5. Edit the Makefile:
-
-    ```makefile
-    # OS-specific settings
-    ifeq ($(OS),windows)
-        [...]
-
-        # Windows-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-windows/include
-        LDFLAGS += -Lvcpkg_installed/x64-windows/lib
-        LDLIBS += # Add libraries with -l...
-    else ifeq ($(OS),macos)
-        # macOS-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-osx/include
-        LDFLAGS += -Lvcpkg_installed/x64-osx/lib
-        LDLIBS += # Add libraries with -l...
-    else ifeq ($(OS),linux)
-        # Linux-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-linux/include
-        LDFLAGS += -Lvcpkg_installed/x64-linux/lib
-        LDLIBS += # Add libraries with -l...
-    endif
-    ```
-
-See [this gist](https://gist.github.com/KRMisha/7c19c73b2833f54f2d84bc7bb3ae788c) for an example of the modifications to make.
-
 #### [Conan](https://conan.io/)
 
 You can integrate Conan with the Makefile by using the [MakeDeps generator](https://docs.conan.io/2/reference/tools/gnu/makedeps.html).
@@ -346,6 +289,64 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
     ```
 
 See [this gist](https://gist.github.com/KRMisha/99099d3c38efb038ff3b39e3c1bd6880) for an example of the modifications to make.
+
+#### [vcpkg](https://vcpkg.io/en/)
+
+You can integrate vcpkg with the Makefile by using the [manual integration](https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/manual-integration).
+
+1. Add vcpkg as a submodule:
+
+    ```sh
+    git submodule add https://github.com/Microsoft/vcpkg.git
+    ```
+
+2. Run the bootstrap script to build vcpkg:
+
+    ```sh
+    ./vcpkg/bootstrap-vcpkg.sh
+    ```
+
+3. Create a `vcpkg.json` at the root of the project:
+
+    ```jsonc
+    {
+        "dependencies": [
+            // Add dependencies...
+        ]
+    }
+    ```
+
+4. Install the dependencies listed in `vcpkg.json`:
+
+    ```sh
+    ./vcpkg/vcpkg install
+    ```
+
+5. Edit the Makefile:
+
+    ```makefile
+    # OS-specific settings
+    ifeq ($(OS),windows)
+        [...]
+
+        # Windows-specific settings
+        INCLUDES += -Ivcpkg_installed/x64-windows/include
+        LDFLAGS += -Lvcpkg_installed/x64-windows/lib
+        LDLIBS += # Add libraries with -l...
+    else ifeq ($(OS),macos)
+        # macOS-specific settings
+        INCLUDES += -Ivcpkg_installed/x64-osx/include
+        LDFLAGS += -Lvcpkg_installed/x64-osx/lib
+        LDLIBS += # Add libraries with -l...
+    else ifeq ($(OS),linux)
+        # Linux-specific settings
+        INCLUDES += -Ivcpkg_installed/x64-linux/include
+        LDFLAGS += -Lvcpkg_installed/x64-linux/lib
+        LDLIBS += # Add libraries with -l...
+    endif
+    ```
+
+See [this gist](https://gist.github.com/KRMisha/7c19c73b2833f54f2d84bc7bb3ae788c) for an example of the modifications to make.
 
 ### Header-only library
 
@@ -501,8 +502,8 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
         - [Updating the documentation](#updating-the-documentation)
 - [Adding libraries](#adding-libraries)
     - [Using a package manager](#using-a-package-manager)
-        - [vcpkg](#vcpkg)
         - [Conan](#conan)
+        - [vcpkg](#vcpkg)
     - [Header-only library](#header-only-library)
     - [Library installed system-wide](#library-installed-system-wide)
     - [Library built from source](#library-built-from-source)
