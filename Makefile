@@ -5,12 +5,11 @@
 # Executable name
 EXEC = program
 
-# Build, bin, assets, and install directories (bin and build root directories are kept for clean)
+# Build, bin, and assets directories (BUILD_DIR_ROOT and BIN_DIR_ROOT are used by the clean target)
 BUILD_DIR_ROOT = build
 BIN_DIR_ROOT = bin
 ASSETS_DIR = assets
 ASSETS_OS_DIR := $(ASSETS_DIR)_os
-INSTALL_DIR := ~/Desktop/$(EXEC)
 
 # Sources (searches recursively inside the source directory)
 SRC_DIR = src
@@ -125,12 +124,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 # Include automatically generated dependencies
 -include $(DEPS)
 
-# Install packaged program
-.PHONY: install
-install: all copyassets
-	@echo "Packaging program to $(INSTALL_DIR)"
-	@mkdir -p $(INSTALL_DIR) && cp -r $(BIN_DIR)/. $(INSTALL_DIR)
-
 # Build and run
 .PHONY: run
 run: all
@@ -217,7 +210,6 @@ help:
 	\n\
 	Targets:\n\
 	  all             Build executable (debug mode by default) (default target)\n\
-	  install         Install packaged program to desktop (debug mode by default)\n\
 	  run             Build and run executable (debug mode by default)\n\
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
@@ -234,7 +226,7 @@ help:
 	Options:\n\
 	  release=1       Run target using release configuration rather than debug\n\
 	\n\
-	Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets\n"
+	Note: the above options affect the all, run, copyassets, compdb, and printvars targets\n"
 
 # Print Makefile variables
 .PHONY: printvars
@@ -246,7 +238,6 @@ printvars:
 	BIN_DIR: \"$(BIN_DIR)\"\n\
 	ASSETS_DIR: \"$(ASSETS_DIR)\"\n\
 	ASSETS_OS_DIR: \"$(ASSETS_OS_DIR)\"\n\
-	INSTALL_DIR: \"$(INSTALL_DIR)\"\n\
 	SRC_DIR: \"$(SRC_DIR)\"\n\
 	SRCS: \"$(SRCS)\"\n\
 	INCLUDE_DIR: \"$(INCLUDE_DIR)\"\n\

@@ -58,7 +58,6 @@ Usage: make target... [options]...
 
 Targets:
   all             Build executable (debug mode by default) (default target)
-  install         Install packaged program to desktop (debug mode by default)
   run             Build and run executable (debug mode by default)
   copyassets      Copy assets to executable directory for selected platform and configuration
   cleanassets     Clean assets from executable directories (all platforms)
@@ -75,7 +74,7 @@ Targets:
 Options:
   release=1       Run target using release configuration rather than debug
 
-Note: the above options affect the all, install, run, copyassets, compdb, and printvars targets
+Note: the above options affect the all, run, copyassets, compdb, and printvars targets
 ```
 
 ### Building
@@ -365,7 +364,7 @@ Header-only libraries are composed solely of header files. This way, no separate
 1. If this is the first library you are adding, create a new `external` directory at the root of the project.
 2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's header files.
 3. Download the library's header files and add them to `external/<library-name>`.
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable at line 21 of the Makefile.
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable at line 20 of the Makefile.
 
 ### Library installed system-wide
 
@@ -381,7 +380,7 @@ These system package managers install dependencies in a default system-wide dire
 Relying on a system package manager for your libraries can make it less straightforward for developers across platforms to start working on your project. Nevertheless, they can be a quick way to start using a library, especially if this library is already required by the system.
 
 1. Use your system package manager to install the library's development package. Often, these will have the `-dev` or `-devel` suffix.
-2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
+2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 34 of the Makefile.
 
     Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
 
@@ -397,9 +396,9 @@ Alternatively, if the library is not available in any package manager, you can b
 
     You may wish to instead add the library as a Git submodule inside the `external` directory to make updates easier.
 
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable at line 21 of the Makefile.
-5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable at line 32 of the Makefile.
-6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 35 of the Makefile.
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable at line 20 of the Makefile.
+5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable at line 31 of the Makefile.
+6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 34 of the Makefile.
 
     Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
 
@@ -421,16 +420,16 @@ The following table presents an overview of the most commonly changed settings o
 | Configuration                                                                                 | Variable                          | Line  |
 |-----------------------------------------------------------------------------------------------|-----------------------------------|-------|
 | Change the output executable name                                                             | `EXEC`                            | 6     |
-| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                             | 27    |
-| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                        | 24    |
-| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                        | 28    |
-| Add/remove compilation warnings                                                               | `WARNINGS`                        | 29    |
-| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 21    |
-| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 32    |
-| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 35    |
-| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 51-70 |
+| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                             | 26    |
+| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                        | 23    |
+| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                        | 27    |
+| Add/remove compilation warnings                                                               | `WARNINGS`                        | 28    |
+| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 20    |
+| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 31    |
+| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 34    |
+| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 50-69 |
 
-All the configurable options are defined between lines 1-70. For most uses, the Makefile should not need to be modified beyond line 70.
+All the configurable options are defined between lines 1-69. For most uses, the Makefile should not need to be modified beyond line 69.
 
 ### Platform-specific library configuration
 
@@ -442,9 +441,9 @@ The previous sections explain how to configure a library using the common `INCLU
 
 The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
 
-Lines 51-70 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
+Lines 50-69 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To configure a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
 
-> The common `INCLUDES` (line 21), `LDFLAGS` (line 32), and `LDLIBS` (line 35) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 51-70.
+> The common `INCLUDES` (line 20), `LDFLAGS` (line 31), and `LDLIBS` (line 34) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 50-69.
 
 ## Project hierarchy
 
