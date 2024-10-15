@@ -57,8 +57,8 @@ $ make help
 Usage: make target... [options]...
 
 Targets:
-  all             Build executable (debug mode by default) (default target)
-  run             Build and run executable (debug mode by default)
+  all             Build executable (debug configuration by default) (default target)
+  run             Build and run executable (debug configuration by default)
   copyassets      Copy assets to executable directory for selected platform and configuration
   cleanassets     Clean assets from executable directories (all platforms)
   clean           Clean build and bin directories (all platforms)
@@ -141,9 +141,9 @@ This will remove the entire `build` and `bin` directories.
 
 Certain options can be specified when building, running, and copying assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
 
-#### Release
+#### Release configuration
 
-By default, builds are in debug mode. To build for release (including optimizations), add the `release=1` option when invoking `make`.
+By default, builds use the debug configuration. To build for release (including optimizations), add the `release=1` option when invoking `make`.
 
 ```sh
 make release=1
@@ -502,7 +502,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
         - [Cleaning assets](#cleaning-assets)
     - [Cleaning](#cleaning)
     - [Options](#options)
-        - [Release](#release)
+        - [Release configuration](#release-configuration)
     - [Generating a JSON compilation database](#generating-a-json-compilation-database)
     - [Formatting](#formatting)
     - [Linting](#linting)

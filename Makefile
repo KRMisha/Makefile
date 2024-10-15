@@ -82,7 +82,7 @@ BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
 BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
 ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
 
-# Debug (default) and release modes settings
+# Debug (default) and release configuration settings
 ifeq ($(release),1)
 	BUILD_DIR := $(BUILD_DIR)/release
 	BIN_DIR := $(BIN_DIR)/release
@@ -209,8 +209,8 @@ help:
 	Usage: make target... [options]...\n\
 	\n\
 	Targets:\n\
-	  all             Build executable (debug mode by default) (default target)\n\
-	  run             Build and run executable (debug mode by default)\n\
+	  all             Build executable (debug configuration by default) (default target)\n\
+	  run             Build and run executable (debug configuration by default)\n\
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
 	  clean           Clean build and bin directories (all platforms)\n\
