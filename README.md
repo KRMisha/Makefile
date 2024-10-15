@@ -268,24 +268,34 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
     CONAN_LIB_FLAG = -l
     CONAN_SYSTEM_LIB_FLAG = -l
     include $(BUILD_DIR_ROOT)/conandeps.mk
+
+    # Sources (searches recursively inside the source directory)
     [...]
+
     # Includes
     INCLUDE_DIR = include
     INCLUDES := -I$(INCLUDE_DIR) $(CONAN_INCLUDE_DIRS)
 
     # C preprocessor settings
     CPPFLAGS = $(INCLUDES) -MMD -MP $(CONAN_DEFINES)
+
     [...]
+
     # Linker flags
     LDFLAGS = $(CONAN_LIB_DIRS)
 
     # Libraries to link
     LDLIBS = $(CONAN_LIBS) $(CONAN_SYSTEM_LIBS)
+
     [...]
+
     # Generate Conan dependencies
     $(BUILD_DIR_ROOT)/conandeps.mk: conanfile.txt
         @echo "Generating: $@"
         @conan install . --output-folder=build --build=missing
+
+    # Build executable
+    [...]
     ```
 
 See [this gist](https://gist.github.com/KRMisha/99099d3c38efb038ff3b39e3c1bd6880) for an example of the modifications to make.
