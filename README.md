@@ -40,7 +40,7 @@ See the [table of contents](#table-of-contents) at the end.
     2. Add the path to MinGW-64's `bin` directory to Windows's system `PATH` environment variable.
         > You will need to use `mingw32-make` instead of `make` each time the `make` command is used in this README.
     3. Install Git Bash by installing [Git for Windows](https://git-scm.com/downloads).
-        > You will need to use **Git Bash** over PowerShell or cmd.exe each time the `make` command is used in this README.
+        > You will need to use **Git Bash** instead of PowerShell or `cmd.exe` each time the `make` command is used in this README.
 
 ### Optional dependencies
 
@@ -99,7 +99,7 @@ make CXX=clang++
 make run
 ```
 
-This will run the executable, rebuilding it first if it was out of date.
+This will run the executable, rebuilding it first if it was out of date. The working directory will be the executable's directory, i.e. the current `bin` directory.
 
 ### Assets
 
@@ -139,11 +139,11 @@ This will remove the entire `build` directory.
 
 ### Options
 
-Certain options can be specified when building, running, and copying assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
+Options can be specified when building, running, and copying assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
 
 #### Release configuration
 
-By default, builds use the debug configuration. To build for release (including optimizations), add the `release=1` option when invoking `make`.
+By default, builds use the debug configuration. To build for release (including optimizations), add the `release=1` option when invoking `make`:
 
 ```sh
 make release=1
@@ -163,7 +163,7 @@ Some language servers and tools, like clangd or clang-tidy, rely on a [JSON comp
 make compdb
 ```
 
-This will create the compilation database in `build/compile_commands.json`.
+This will create the compilation database in `build/compile_commands.json`. You should rerun this command any time you add files to your project.
 
 ### Formatting
 
@@ -179,13 +179,15 @@ To only verify if the files are correctly formatted, use the following command:
 make format-check
 ```
 
+This will return exit code `1` if any files are not formatted.
+
 ### Linting
 
 ```sh
 make lint
 ```
 
-This will lint all files in the `src` and `include` directories using clang-tidy according to the options set in `.clang-tidy`.
+This will lint all files in the `src` and `include` directories using clang-tidy according to the options set in `.clang-tidy`. This will return exit code `1` if any files have lint errors.
 
 To apply the suggested fixes to errors found by clang-tidy, use the following command:
 
@@ -194,6 +196,8 @@ make lint-fix
 ```
 
 ### Generating documentation
+
+Documentation can be generated from [documentation comments](https://www.doxygen.nl/manual/docblocks.html) using Doxygen.
 
 #### First time use
 
@@ -226,7 +230,7 @@ There are several ways to add a library to your project.
 
 ### Using a package manager
 
-For more complex projects, using a package manager is the recommended way to add libraries. This method ensures that your libraries are managed identically across platforms.
+For more complex projects, using a package manager is the recommended way to add libraries. This method ensures that your libraries are managed consistently across platforms.
 
 #### [Conan](https://conan.io/)
 
@@ -244,7 +248,7 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
     conan profile detect --force
     ```
 
-    The path of the generated profile can be found using `conan profile path default`. You can edit this file and set `compiler.cppstd` to your desired C++ standard.
+    The path of the generated profile can be found using `conan profile path default`. You can edit this file and set `compiler.cppstd` to your desired C++ standard (e.g. `compiler.cppstd=20`).
 
 3. Create a `conanfile.txt` at the root of the project:
 
@@ -377,12 +381,12 @@ Some libraries can be installed system-wide, using your system's package manager
 
 These system package managers install dependencies in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. Some important system-wide libraries may also come preinstalled on your system.
 
-Relying on a system package manager for your libraries can make it less straightforward for developers across platforms to start working on your project. Nevertheless, they can be a quick way to start using a library, especially if this library is already required by the system.
+Relying on a system package manager for your libraries can make it less straightforward for other developers using a different platform to start working on your project. Nevertheless, they can be a quick way for you to start using a library, especially if this library is already required by the system.
 
 1. Use your system package manager to install the library's development package. Often, these will have the `-dev` or `-devel` suffix.
 2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 33 of the Makefile.
 
-    Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
+    Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
     Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
 
@@ -394,13 +398,13 @@ Alternatively, if the library is not available in any package manager, you can b
 2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's files.
 3. Build or download the library's compiled files and add them to `external/<library-name>`.
 
-    You may wish to instead add the library as a Git submodule inside the `external` directory to make updates easier.
+    You may instead prefer to add the library as a Git submodule inside the `external` directory to make updates easier.
 
 4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable at line 19 of the Makefile.
 5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable at line 30 of the Makefile.
 6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 33 of the Makefile.
 
-    Depending on the library, more than one library name may need to be added with the `-l` flag. Refer to your library's documentation for the names to use with the `-l` flag in this step.
+    Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
     Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
 
@@ -423,7 +427,7 @@ The following table presents an overview of the most commonly changed settings o
 | Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                             | 25    |
 | Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                        | 22    |
 | Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                        | 26    |
-| Add/remove compilation warnings                                                               | `WARNINGS`                        | 27    |
+| Add/remove compiler warnings                                                                  | `WARNINGS`                        | 27    |
 | Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 19    |
 | Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 30    |
 | Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 33    |
