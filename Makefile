@@ -5,9 +5,8 @@
 # Executable name
 EXEC = program
 
-# Build, bin, and assets directories (BUILD_DIR_ROOT and BIN_DIR_ROOT are used by the clean target)
+# Build and assets directories
 BUILD_DIR_ROOT = build
-BIN_DIR_ROOT = bin
 ASSETS_DIR = assets
 ASSETS_OS_DIR := $(ASSETS_DIR)_os
 
@@ -47,7 +46,7 @@ else
 	endif
 endif
 
-# OS-specific settings
+# Platform-specific settings
 ifeq ($(OS),windows)
 	# Link libgcc and libstdc++ statically on Windows
 	LDFLAGS += -static-libgcc -static-libstdc++
@@ -77,25 +76,26 @@ ifeq ($(OS),windows)
 	EXEC := $(EXEC).exe
 endif
 
-# OS-specific build, bin, and assets directories
+# Platform-specific build and assets directories
 BUILD_DIR := $(BUILD_DIR_ROOT)/$(OS)
-BIN_DIR := $(BIN_DIR_ROOT)/$(OS)
 ASSETS_OS_DIR := $(ASSETS_OS_DIR)/$(OS)
 
 # Debug (default) and release configuration settings
 ifeq ($(release),1)
 	BUILD_DIR := $(BUILD_DIR)/release
-	BIN_DIR := $(BIN_DIR)/release
-	CXXFLAGS += -O3
 	CPPFLAGS += -DNDEBUG
+	CXXFLAGS += -O3
 else
 	BUILD_DIR := $(BUILD_DIR)/debug
-	BIN_DIR := $(BIN_DIR)/debug
 	CXXFLAGS += -O0 -g
 endif
 
-# Objects and dependencies
-OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+# Object and bin directories
+OBJ_DIR := $(BUILD_DIR)/obj
+BIN_DIR := $(BUILD_DIR)/bin
+
+# Object files, dependencies, and compilation database fragments
+OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 COMPDBS := $(OBJS:.o=.json)
 
@@ -116,7 +116,7 @@ $(BIN_DIR)/$(EXEC): $(OBJS)
 	@$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 # Compile C++ source files
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo "Compiling: $<"
 	@mkdir -p $(@D)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $@
@@ -142,14 +142,13 @@ copyassets:
 .PHONY: cleanassets
 cleanassets:
 	@echo "Cleaning assets for all platforms"
-	@find $(BIN_DIR_ROOT) -mindepth 3 ! -name $(EXEC) -delete
+	@find $(BUILD_DIR_ROOT) -path '*/bin/*' ! -name $(EXEC) -delete
 
-# Clean build and bin directories for all platforms
+# Clean build directory for all platforms
 .PHONY: clean
 clean:
-	@echo "Cleaning $(BUILD_DIR_ROOT) and $(BIN_DIR_ROOT) directories"
+	@echo "Cleaning $(BUILD_DIR_ROOT) directory"
 	@$(RM) -r $(BUILD_DIR_ROOT)
-	@$(RM) -r $(BIN_DIR_ROOT)
 
 .PHONY: compdb
 compdb: $(BUILD_DIR_ROOT)/compile_commands.json
@@ -163,7 +162,7 @@ $(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
 	@printf "]\n" >> $@
 
 # Generate JSON compilation database fragments from source files
-$(BUILD_DIR)/%.json: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.json: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	@printf "\
 	{\n\
@@ -213,7 +212,7 @@ help:
 	  run             Build and run executable (debug configuration by default)\n\
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
-	  clean           Clean build and bin directories (all platforms)\n\
+	  clean           Clean build directory (all platforms)\n\
 	  compdb          Generate JSON compilation database (compile_commands.json)\n\
 	  format          Format source code using clang-format\n\
 	  format-check    Check that source code is formatted using clang-format\n\
@@ -235,6 +234,7 @@ printvars:
 	OS: \"$(OS)\"\n\
 	EXEC: \"$(EXEC)\"\n\
 	BUILD_DIR: \"$(BUILD_DIR)\"\n\
+	OBJ_DIR: \"$(OBJ_DIR)\"\n\
 	BIN_DIR: \"$(BIN_DIR)\"\n\
 	ASSETS_DIR: \"$(ASSETS_DIR)\"\n\
 	ASSETS_OS_DIR: \"$(ASSETS_OS_DIR)\"\n\
