@@ -106,6 +106,9 @@ FILES := $(shell find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o 
 #### Targets
 ################################################################################
 
+# Disable default implicit rules
+.SUFFIXES:
+
 .PHONY: all
 all: $(BIN_DIR)/$(EXEC)
 
