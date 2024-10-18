@@ -16,7 +16,7 @@ SRCS := $(sort $(shell find $(SRC_DIR) -name '*.cpp'))
 
 # Includes
 INCLUDE_DIR = include
-INCLUDES := -I$(INCLUDE_DIR)
+INCLUDES = -I$(INCLUDE_DIR)
 
 # C preprocessor settings
 CPPFLAGS = $(INCLUDES) -MMD -MP
