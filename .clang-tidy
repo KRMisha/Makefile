@@ -5,6 +5,7 @@ Checks: >
   clang-diagnostic-*,
   clang-analyzer-*,
   cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-do-while,
   -cppcoreguidelines-avoid-magic-numbers,
   google-explicit-constructor,
   misc-*,
