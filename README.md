@@ -335,6 +335,13 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
     ./vcpkg/vcpkg install
     ```
 
+    Note: on Windows, you should set the target and host triplet to the [MinGW triplet](https://learn.microsoft.com/en-us/vcpkg/users/platforms/mingw). This can be done by setting the following environment variables *before* running the previous command:
+
+    ```sh
+    export VCPKG_DEFAULT_TRIPLET=x64-mingw-static
+    export VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-static
+    ```
+
 5. Edit the Makefile:
 
     ```makefile
@@ -343,8 +350,8 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
         [...]
 
         # Windows-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-windows/include
-        LDFLAGS += -Lvcpkg_installed/x64-windows/lib
+        INCLUDES += -Ivcpkg_installed/x64-mingw-static/include
+        LDFLAGS += -Lvcpkg_installed/x64-mingw-static/lib
         LDLIBS += # Add libraries with -l...
     else ifeq ($(OS),macos)
         # macOS-specific settings
