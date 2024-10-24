@@ -14,6 +14,7 @@ A cross-platform C++ Makefile for any project!
 - **Debug and release** configurations
 - **Configurable**: easily add libraries or change compilation settings
 - **Package manager**-compatible (Conan and vcpkg)
+- **Testing** with the library of your choice
 - **Formatting** with clang-format
 - **Linting** with clang-tidy
 - **Generate documentation** from Doxygen comments
@@ -57,8 +58,9 @@ $ make help
 Usage: make target... [options]...
 
 Targets:
-  all             Build executable (debug configuration by default) (default target)
+  all             Build executable and tests (debug configuration by default) (default target)
   run             Build and run executable (debug configuration by default)
+  test            Build and run tests (debug configuration by default)
   copyassets      Copy assets to executable directory for selected platform and configuration
   cleanassets     Clean assets from executable directories (all platforms)
   clean           Clean build directory (all platforms)
@@ -74,7 +76,7 @@ Targets:
 Options:
   release=1       Run target using release configuration rather than debug
 
-Note: the above options affect the all, run, copyassets, compdb, and printvars targets
+Note: the above options affect the following targets: all, run, test, copyassets, compdb, printvars
 ```
 
 ### Building
@@ -83,7 +85,7 @@ Note: the above options affect the all, run, copyassets, compdb, and printvars t
 make
 ```
 
-This will compile the executable and output it inside the current `bin` directory (`build/<platform>/<configuration>/bin`). This is equivalent to `make all`.
+This will compile the executable (and optionally, tests) and output it inside the current `bin` directory (`build/<platform>/<configuration>/bin`). This is equivalent to `make all`.
 
 #### Using a different compiler
 
@@ -101,6 +103,18 @@ make run
 
 This will run the executable, rebuilding it first if it was out of date. The working directory will be the executable's directory, i.e. the current `bin` directory.
 
+### Testing
+
+If your project contains tests, you can run them with the following command:
+
+```sh
+make test
+```
+
+This will run the test executable, rebuilding it first if it was out of date. The working directory will be the current `bin` directory.
+
+See [here](#setting-up-tests) for information on setting up tests for your project.
+
 ### Assets
 
 #### Copying assets
@@ -113,11 +127,16 @@ make copyassets
 
 This will copy the contents of `assets` to the current `bin` directory, preserving their folder structure.
 
+#### Platform-specific assets
+
 If you have certain assets which you wish to only copy for certain platforms, you can do the following:
 
 1. Create an `assets_os/<platform>` directory at the root of the project. The `<platform>` directory should be named either `linux`, `macos`, or `windows` based on the desired platform for the assets.
 2. Inside this new directory, add all the assets to be copied only for this platform.
-3. Use the `make copyassets` command as usual. The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
+
+You can then use the `make copyassets` command as usual.
+
+The files copied to the current `bin` directory will be the combination of the files in `assets` and `assets_os`, with files in `assets_os` overwriting those in `assets` in case of naming clashes.
 
 > The `assets_os` directory is useful for holding Windows DLLs which need to be copied next to the executable (using `assets_os/windows`).
 
@@ -127,7 +146,7 @@ If you have certain assets which you wish to only copy for certain platforms, yo
 make cleanassets
 ```
 
-This will remove all the files in all `bin` directories except the executables.
+This will remove all the files in all `bin` directories, except for executables and tests.
 
 ### Cleaning
 
@@ -139,7 +158,7 @@ This will remove the entire `build` directory.
 
 ### Options
 
-Options can be specified when building, running, and copying assets. These will modify the settings used to build the executable and affect what is considered the current `bin` directory when running a command.
+Options can be specified when building, running, testing, and copying assets. These will modify the settings used to build the executable (and optionally, tests) and affect what is considered the current `bin` directory when running a command.
 
 #### Release configuration
 
@@ -171,7 +190,7 @@ This will create the compilation database in `build/compile_commands.json`. You 
 make format
 ```
 
-This will format all files in the `src` and `include` directories using clang-format according to the options set in `.clang-format`.
+This will format all files (both sources and headers) using clang-format according to the options set in `.clang-format`.
 
 To only verify if the files are correctly formatted, use the following command:
 
@@ -187,7 +206,7 @@ This will return exit code `1` if any files are not formatted.
 make lint
 ```
 
-This will lint all files in the `src` and `include` directories using clang-tidy according to the options set in `.clang-tidy`. This will return exit code `1` if any files have lint errors.
+This will lint all files (both sources and headers) using clang-tidy according to the options set in `.clang-tidy`. This will return exit code `1` if any files have lint errors.
 
 To apply the suggested fixes to errors found by clang-tidy, use the following command:
 
@@ -375,7 +394,7 @@ Header-only libraries are composed solely of header files. This way, no separate
 1. If this is the first library you are adding, create a new `external` directory at the root of the project.
 2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's header files.
 3. Download the library's header files and add them to `external/<library-name>`.
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable at line 19 of the Makefile.
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable (line 28 of the Makefile).
 
 ### Library installed system-wide
 
@@ -388,10 +407,10 @@ Some libraries can be installed system-wide, using your system's package manager
 
 These system package managers install dependencies in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. Some important system-wide libraries may also come preinstalled on your system.
 
-Relying on a system package manager for your libraries can make it less straightforward for other developers using a different platform to start working on your project. Nevertheless, they can be a quick way for you to start using a library, especially if this library is already required by the system.
+Relying on a system package manager for your libraries can make it less straightforward for other developers using a different platform to start working on your project. Nevertheless, this can be a quick way for you to start using a library, especially if this library is already required by the system.
 
-1. Use your system package manager to install the library's development package. Often, these will have the `-dev` or `-devel` suffix.
-2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 33 of the Makefile.
+1. Use your system package manager to install the library's development package. Often, development packages will have the `-dev` or `-devel` suffix.
+2. Link with the library: add `-l<library-name>` to the `LDLIBS` variable (line 44 of the Makefile).
 
     Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
@@ -399,7 +418,7 @@ Relying on a system package manager for your libraries can make it less straight
 
 ### Library built from source
 
-Alternatively, if the library is not available in any package manager, you can build it from source or download its compiled artifacts and add them to your project.
+Alternatively, if a library is not available in any package manager, you can build it from source or download its compiled artifacts and add them to your project.
 
 1. If this is the first library you are adding, create a new `external` directory at the root of the project.
 2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's files.
@@ -407,20 +426,51 @@ Alternatively, if the library is not available in any package manager, you can b
 
     You may instead prefer to add the library as a Git submodule inside the `external` directory to make updates easier.
 
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable at line 19 of the Makefile.
-5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable at line 30 of the Makefile.
-6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable at line 33 of the Makefile.
+4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable (line 28 of the Makefile).
+5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable (line 40 of the Makefile).
+6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable (line 44 of the Makefile).
 
     Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
     Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
 
-Note that the folder structure inside `external/<library-name>` will vary from one library to the next. In these instructions:
+Note that the folder structure inside `external/<library-name>` will vary from one library to the next. In the above instructions:
 
 - The `include` subdirectory refers to a directory containing all of the library's header files.
 - The `lib` subdirectory refers to a directory containing all of the library's compiled files (e.g. `.so`, `.a`, `.lib`, `.framework`, etc.). If you have chosen to build the library from source, you should copy the output of the compiled library to the `lib` directory.
 
 These directories may be named differently: refer to your library's documentation for more information.
+
+## Setting up tests
+
+1. Create a new `tests` directory at the root of the project to hold your test source files.
+2. Pick your preferred C++ testing framework. For example:
+    - [Catch2](https://github.com/catchorg/Catch2) (recommended)
+    - [doctest](https://github.com/doctest/doctest)
+    - [GoogleTest](https://github.com/google/googletest)
+3. Make the testing framework available to your project using one of the methods described in [adding libraries](#adding-libraries).
+
+    Using a package manager such as [Conan](#conan) or [vcpkg](#vcpkg) is the recommended way to add this library.
+
+    However, do not add the flags for the library to the `INCLUDES`, `LDFLAGS`, or `LDLIBS` variables. This is because only tests should link against the test framework library, not the main executable. See the next step for how to do this.
+
+    > For the simplest possible setup, you may instead prefer to use doctest, which is available as a [single header file](#header-only-library).
+
+4. Add the necessary flags to link with the library, as described in your chosen method for adding libraries, but with the following replacements:
+
+    - Use `TEST_INCLUDES` (line 29) instead of `INCLUDES` (line 28) to add the library's header files to the preprocessor's search path.
+    - Use `TEST_LDFLAGS` (line 41) instead of `LDFLAGS` (line 40) to add the library's compiled files to the linker's search path (if applicable).
+    - Use `TEST_LDLIBS` (line 45) instead of `LDLIBS` (line 44) to link with the library (if applicable).
+
+    The `TEST_INCLUDES`, `TEST_LDFLAGS`, and `TEST_LDLIBS` variables apply only to tests. These are appended to the regular `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables when building the tests.
+
+5. Add at least one test source file to the `tests` directory.
+
+See [this gist](https://gist.github.com/KRMisha/7f796201167780f7e5ae2217445836f2) for an example using Catch2 with Conan.
+
+Once this is done, running `make` (or `make all`) will now build both the executable and tests. To build and run the tests, use `make test`.
+
+> The test executable is built from all the source files under both `tests` and `src`, except for `src/main.cpp`. This means you can test any functions defined in `src`, as long as these are not defined in `src/main.cpp`.
 
 ## Configuration
 
@@ -428,23 +478,24 @@ These directories may be named differently: refer to your library's documentatio
 
 The following table presents an overview of the most commonly changed settings of the Makefile:
 
-| Configuration                                                                                 | Variable                          | Line  |
-|-----------------------------------------------------------------------------------------------|-----------------------------------|-------|
-| Change the output executable name                                                             | `EXEC`                            | 6     |
-| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                             | 25    |
-| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                        | 22    |
-| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                        | 26    |
-| Add/remove compiler warnings                                                                  | `WARNINGS`                        | 27    |
-| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                        | 19    |
-| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                         | 30    |
-| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                          | 33    |
-| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES` - `LDFLAGS` - `LDLIBS` | 49-68 |
+| Configuration                                                                                 | Variable                                       | Line       |
+|-----------------------------------------------------------------------------------------------|------------------------------------------------|------------|
+| Change the output executable name                                                             | `EXEC`                                         | 6          |
+| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                                          | 35         |
+| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                                     | 32         |
+| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                                     | 36         |
+| Add/remove compiler warnings                                                                  | `WARNINGS`                                     | 37         |
+| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                                     | 28         |
+| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                                      | 40         |
+| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                                       | 44         |
+| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES`, `LDFLAGS`, `LDLIBS`                | 61-80      |
+| Add additional includes/linker flags/libraries for tests                                      | `TEST_INCLUDES`, `TEST_LDFLAGS`, `TEST_LDLIBS` | 29, 41, 45 |
 
-All the configurable options are defined between lines 1-68. For most uses, the Makefile should not need to be modified beyond line 68.
+All the configurable options are defined between lines 1-80. For most uses, the Makefile should not need to be modified beyond line 80.
 
 ### Platform-specific library configuration
 
-The previous sections explain how to add a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in some cases, the library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
+The section on [adding libraries](#adding-libraries) explains how to add a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in some cases, a library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
 
 - Adding a library needed only for code enabled on a certain platform
 - Using `-framework` over `-l` to link a library on macOS
@@ -452,9 +503,9 @@ The previous sections explain how to add a library using the common `INCLUDES`, 
 
 The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
 
-Lines 49-68 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To add a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
+Lines 61-80 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which should be used for this purpose. To add a library for a certain platform, simply add the options to the variables under the comment indicating the platform.
 
-> The common `INCLUDES` (line 19), `LDFLAGS` (line 30), and `LDLIBS` (line 33) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 49-68.
+> The common `INCLUDES` (line 28), `LDFLAGS` (line 40), and `LDLIBS` (line 44) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 61-80.
 
 ## Project hierarchy
 
@@ -482,6 +533,8 @@ Lines 49-68 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 ├── src
 │   ├── main.cpp
 │   └── **/*.cpp
+├── tests
+│   └── **/*.cpp
 ├── .clang-format
 ├── .clang-tidy
 ├── .gitattributes
@@ -507,8 +560,10 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Building](#building)
         - [Using a different compiler](#using-a-different-compiler)
     - [Running](#running)
+    - [Testing](#testing)
     - [Assets](#assets)
         - [Copying assets](#copying-assets)
+        - [Platform-specific assets](#platform-specific-assets)
         - [Cleaning assets](#cleaning-assets)
     - [Cleaning](#cleaning)
     - [Options](#options)
@@ -526,6 +581,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Header-only library](#header-only-library)
     - [Library installed system-wide](#library-installed-system-wide)
     - [Library built from source](#library-built-from-source)
+- [Setting up tests](#setting-up-tests)
 - [Configuration](#configuration)
     - [Frequently changed settings](#frequently-changed-settings)
     - [Platform-specific library configuration](#platform-specific-library-configuration)

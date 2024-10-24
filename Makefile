@@ -5,18 +5,28 @@
 # Executable name
 EXEC = program
 
-# Build and assets directories
+# Test executable name
+TEST_EXEC = tests
+
+# Build directory
 BUILD_DIR_ROOT = build
+
+# Assets directories
 ASSETS_DIR = assets
 ASSETS_OS_DIR := $(ASSETS_DIR)_os
 
-# Sources (searches recursively inside the source directory)
+# Executable sources (found recursively inside SRC_DIR)
 SRC_DIR = src
 SRCS := $(sort $(shell find $(SRC_DIR) -name '*.cpp'))
+
+# Test sources (found recursively inside TEST_DIR if it exists)
+TEST_DIR = tests
+TEST_SRCS := $(sort $(shell find $(TEST_DIR) -name '*.cpp' 2> /dev/null))
 
 # Includes
 INCLUDE_DIR = include
 INCLUDES = -I$(INCLUDE_DIR)
+TEST_INCLUDES =
 
 # C preprocessor settings
 CPPFLAGS = $(INCLUDES) -MMD -MP
@@ -28,9 +38,11 @@ WARNINGS = -Wall -Wpedantic -Wextra
 
 # Linker flags
 LDFLAGS =
+TEST_LDFLAGS =
 
 # Libraries to link
 LDLIBS =
+TEST_LDLIBS =
 
 # Target OS detection
 ifeq ($(OS),Windows_NT) # OS is a preexisting environment variable on Windows
@@ -71,9 +83,10 @@ endif
 #### Final setup
 ################################################################################
 
-# Add .exe extension to executable on Windows
+# Add .exe extension to executables on Windows
 ifeq ($(OS),windows)
 	EXEC := $(EXEC).exe
+	TEST_EXEC := $(TEST_EXEC).exe
 endif
 
 # Platform-specific build and assets directories
@@ -94,13 +107,22 @@ endif
 OBJ_DIR := $(BUILD_DIR)/obj
 BIN_DIR := $(BUILD_DIR)/bin
 
-# Object files, dependencies, and compilation database fragments
-OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-DEPS := $(OBJS:.o=.d)
-COMPDBS := $(OBJS:.o=.json)
+# Object files
+MAIN_SRC = $(SRC_DIR)/main.cpp
+MAIN_OBJ := $(MAIN_SRC:%.cpp=$(OBJ_DIR)/%.o)
+SRCS_WITHOUT_MAIN := $(filter-out $(MAIN_SRC),$(SRCS))
+SRC_OBJS_WITHOUT_MAIN := $(SRCS_WITHOUT_MAIN:%.cpp=$(OBJ_DIR)/%.o)
+TEST_OBJS := $(TEST_SRCS:%.cpp=$(OBJ_DIR)/%.o)
+ALL_OBJS := $(MAIN_OBJ) $(SRC_OBJS_WITHOUT_MAIN) $(TEST_OBJS)
 
-# All files (sources and headers)
-FILES := $(shell find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl')
+# Dependency files
+DEPS := $(ALL_OBJS:.o=.d)
+
+# Compilation database fragments
+COMPDBS := $(ALL_OBJS:.o=.json)
+
+# All files (sources and headers) (for formatting and linting)
+FILES := $(shell find $(SRC_DIR) $(TEST_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.inl' 2> /dev/null)
 
 ################################################################################
 #### Targets
@@ -110,28 +132,43 @@ FILES := $(shell find $(SRC_DIR) $(INCLUDE_DIR) -name '*.cpp' -o -name '*.h' -o 
 .SUFFIXES:
 
 .PHONY: all
-all: $(BIN_DIR)/$(EXEC)
+all: $(BIN_DIR)/$(EXEC) $(if $(TEST_SRCS),$(BIN_DIR)/$(TEST_EXEC))
 
 # Build executable
-$(BIN_DIR)/$(EXEC): $(OBJS)
+$(BIN_DIR)/$(EXEC): $(MAIN_OBJ) $(SRC_OBJS_WITHOUT_MAIN)
 	@echo "Building executable: $@"
 	@mkdir -p $(@D)
 	@$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
+# Build tests
+$(BIN_DIR)/$(TEST_EXEC): LDFLAGS += $(TEST_LDFLAGS)
+$(BIN_DIR)/$(TEST_EXEC): LDLIBS += $(TEST_LDLIBS)
+$(BIN_DIR)/$(TEST_EXEC): $(TEST_OBJS) $(SRC_OBJS_WITHOUT_MAIN)
+	@echo "Building tests: $@"
+	@mkdir -p $(@D)
+	@$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
 # Compile C++ source files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/$(TEST_DIR)/%.o: INCLUDES += $(TEST_INCLUDES)
+$(ALL_OBJS): $(OBJ_DIR)/%.o: %.cpp
 	@echo "Compiling: $<"
 	@mkdir -p $(@D)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $@
 
-# Include automatically generated dependencies
+# Include automatically-generated dependency files
 -include $(DEPS)
 
-# Build and run
+# Build and run executable
 .PHONY: run
-run: all
-	@echo "Starting program: $(BIN_DIR)/$(EXEC)"
+run: $(BIN_DIR)/$(EXEC)
+	@echo "Running program: $<"
 	@cd $(BIN_DIR) && ./$(EXEC)
+
+# Build and run tests
+.PHONY: test
+test: $(BIN_DIR)/$(TEST_EXEC)
+	@echo "Running tests: $<"
+	@cd $(BIN_DIR) && ./$(TEST_EXEC)
 
 # Copy assets to bin directory for selected platform
 .PHONY: copyassets
@@ -145,7 +182,7 @@ copyassets:
 .PHONY: cleanassets
 cleanassets:
 	@echo "Cleaning assets for all platforms"
-	@find $(BUILD_DIR_ROOT) -path '*/bin/*' ! -name $(EXEC) -delete
+	@find $(BUILD_DIR_ROOT) -path '*/bin/*' ! -name $(EXEC) ! -name $(TEST_EXEC) -delete
 
 # Clean build directory for all platforms
 .PHONY: clean
@@ -165,7 +202,8 @@ $(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
 	@printf "]\n" >> $@
 
 # Generate JSON compilation database fragments from source files
-$(OBJ_DIR)/%.json: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/$(TEST_DIR)/%.json: INCLUDES += $(TEST_INCLUDES)
+$(OBJ_DIR)/%.json: %.cpp
 	@mkdir -p $(@D)
 	@printf "\
 	{\n\
@@ -211,8 +249,9 @@ help:
 	Usage: make target... [options]...\n\
 	\n\
 	Targets:\n\
-	  all             Build executable (debug configuration by default) (default target)\n\
+	  all             Build executable and tests (debug configuration by default) (default target)\n\
 	  run             Build and run executable (debug configuration by default)\n\
+	  test            Build and run tests (debug configuration by default)\n\
 	  copyassets      Copy assets to executable directory for selected platform and configuration\n\
 	  cleanassets     Clean assets from executable directories (all platforms)\n\
 	  clean           Clean build directory (all platforms)\n\
@@ -228,7 +267,7 @@ help:
 	Options:\n\
 	  release=1       Run target using release configuration rather than debug\n\
 	\n\
-	Note: the above options affect the all, run, copyassets, compdb, and printvars targets\n"
+	Note: the above options affect the following targets: all, run, test, copyassets, compdb, printvars\n"
 
 # Print Makefile variables
 .PHONY: printvars
@@ -236,6 +275,7 @@ printvars:
 	@printf "\
 	OS: \"$(OS)\"\n\
 	EXEC: \"$(EXEC)\"\n\
+	TEST_EXEC: \"$(TEST_EXEC)\"\n\
 	BUILD_DIR: \"$(BUILD_DIR)\"\n\
 	OBJ_DIR: \"$(OBJ_DIR)\"\n\
 	BIN_DIR: \"$(BIN_DIR)\"\n\
@@ -243,13 +283,18 @@ printvars:
 	ASSETS_OS_DIR: \"$(ASSETS_OS_DIR)\"\n\
 	SRC_DIR: \"$(SRC_DIR)\"\n\
 	SRCS: \"$(SRCS)\"\n\
+	TEST_DIR: \"$(TEST_DIR)\"\n\
+	TEST_SRCS: \"$(TEST_SRCS)\"\n\
 	INCLUDE_DIR: \"$(INCLUDE_DIR)\"\n\
 	INCLUDES: \"$(INCLUDES)\"\n\
+	TEST_INCLUDES: \"$(TEST_INCLUDES)\"\n\
 	CXX: \"$(CXX)\"\n\
 	CPPFLAGS: \"$(CPPFLAGS)\"\n\
 	CXXFLAGS: \"$(CXXFLAGS)\"\n\
 	WARNINGS: \"$(WARNINGS)\"\n\
 	LDFLAGS: \"$(LDFLAGS)\"\n\
-	LDLIBS: \"$(LDLIBS)\"\n"
+	TEST_LDFLAGS: \"$(TEST_LDFLAGS)\"\n\
+	LDLIBS: \"$(LDLIBS)\"\n\
+	TEST_LDLIBS: \"$(TEST_LDLIBS)\"\n"
 
 # Made by Misha Krieger-Raynauld (https://github.com/KRMisha/Makefile)
