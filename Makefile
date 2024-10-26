@@ -161,7 +161,7 @@ $(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
 	@echo "Generating: $@"
 	@mkdir -p $(@D)
 	@printf "[\n" > $@
-	@sed -e '$$s/$$/,/' -s $(COMPDBS) | sed -e '$$s/,$$//' -e 's/^/    /' >> $@
+	@for file in $(COMPDBS); do sed -e '$$s/$$/,/' "$${file}"; done | sed -e '$$s/,$$//' -e 's/^/    /' >> $@
 	@printf "]\n" >> $@
 
 # Generate JSON compilation database fragments from source files
