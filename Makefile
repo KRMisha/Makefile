@@ -203,7 +203,7 @@ $(BUILD_DIR_ROOT)/compile_commands.json: $(COMPDBS)
 
 # Generate JSON compilation database fragments from source files
 $(OBJ_DIR)/$(TEST_DIR)/%.json: INCLUDES += $(TEST_INCLUDES)
-$(OBJ_DIR)/%.json: %.cpp
+$(COMPDBS): $(OBJ_DIR)/%.json: %.cpp
 	@mkdir -p $(@D)
 	@printf "\
 	{\n\
