@@ -282,21 +282,10 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
 4. Edit the Makefile:
 
     ```makefile
-    # Conan
-    CONAN_DEFINE_FLAG = -D
-    CONAN_INCLUDE_DIR_FLAG = -isystem
-    CONAN_LIB_DIR_FLAG = -L
-    CONAN_BIN_DIR_FLAG = -L
-    CONAN_LIB_FLAG = -l
-    CONAN_SYSTEM_LIB_FLAG = -l
-    include $(BUILD_DIR_ROOT)/conandeps.mk
-
-    # Sources (searches recursively inside the source directory)
-    [...]
-
     # Includes
     INCLUDE_DIR =
-    INCLUDES := $(addprefix -I,$(SRC_DIR) $(INCLUDE_DIR)) $(CONAN_INCLUDE_DIRS)
+    INCLUDES = $(addprefix -I,$(SRC_DIR) $(INCLUDE_DIR)) $(CONAN_INCLUDE_DIRS)
+    TEST_INCLUDES = -I$(TEST_DIR)
 
     # C preprocessor settings
     CPPFLAGS = $(INCLUDES) -MMD -MP $(CONAN_DEFINES)
@@ -305,20 +294,43 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
 
     # Linker flags
     LDFLAGS = $(CONAN_LIB_DIRS)
+    TEST_LDFLAGS =
 
     # Libraries to link
-    LDLIBS = $(CONAN_LIBS) $(CONAN_SYSTEM_LIBS)
+    LDLIBS = $(CONAN_LIBS_<LIBRARY_NAME>) $(CONAN_SYSTEM_LIBS)
+    TEST_LDLIBS =
+
+    [...]
+
+    # Object, bin, and Conan directories
+    OBJ_DIR := $(BUILD_DIR)/obj
+    BIN_DIR := $(BUILD_DIR)/bin
+    CONAN_DIR := $(BUILD_DIR)/conan
+
+    # Conan
+    ifneq ($(MAKECMDGOALS),clean)
+        CONAN_DEFINE_FLAG = -D
+        CONAN_INCLUDE_DIR_FLAG = -isystem
+        CONAN_LIB_DIR_FLAG = -L
+        CONAN_BIN_DIR_FLAG = -L
+        CONAN_LIB_FLAG = -l
+        CONAN_SYSTEM_LIB_FLAG = -l
+        include $(CONAN_DIR)/conandeps.mk
+    endif
 
     [...]
 
     # Generate Conan dependencies
-    $(BUILD_DIR_ROOT)/conandeps.mk: conanfile.txt
+    $(CONAN_DIR)/conandeps.mk: conanfile.txt
         @echo "Generating: $@"
-        @conan install . --output-folder=build --build=missing
+        @mkdir -p $(@D)
+        @conan install . --output-folder=$(CONAN_DIR) --build=missing
 
     # Build executable
     [...]
     ```
+
+`$(CONAN_LIBS_<LIBRARY_NAME>)` should be repeated for each dependency, replacing `<LIBRARY_NAME>` with the library's name. Libraries which depend on other libraries should be listed before the libraries they depend on.
 
 See [this gist](https://gist.github.com/KRMisha/99099d3c38efb038ff3b39e3c1bd6880) for an example of the modifications to make.
 
