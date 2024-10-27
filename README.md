@@ -284,7 +284,7 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
     ```makefile
     # Conan
     CONAN_DEFINE_FLAG = -D
-    CONAN_INCLUDE_DIR_FLAG = -I
+    CONAN_INCLUDE_DIR_FLAG = -isystem
     CONAN_LIB_DIR_FLAG = -L
     CONAN_BIN_DIR_FLAG = -L
     CONAN_LIB_FLAG = -l
@@ -369,17 +369,17 @@ You can integrate vcpkg with the Makefile by using the [manual integration](http
         [...]
 
         # Windows-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-mingw-static/include
+        INCLUDES += -isystem vcpkg_installed/x64-mingw-static/include
         LDFLAGS += -Lvcpkg_installed/x64-mingw-static/lib
         LDLIBS += # Add libraries with -l...
     else ifeq ($(OS),macos)
         # macOS-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-osx/include
+        INCLUDES += -isystem vcpkg_installed/x64-osx/include
         LDFLAGS += -Lvcpkg_installed/x64-osx/lib
         LDLIBS += # Add libraries with -l...
     else ifeq ($(OS),linux)
         # Linux-specific settings
-        INCLUDES += -Ivcpkg_installed/x64-linux/include
+        INCLUDES += -isystem vcpkg_installed/x64-linux/include
         LDFLAGS += -Lvcpkg_installed/x64-linux/lib
         LDLIBS += # Add libraries with -l...
     endif
@@ -394,7 +394,7 @@ Header-only libraries are composed solely of header files. This way, no separate
 1. If this is the first library you are adding, create a new `external` directory at the root of the project.
 2. Inside the `external` directory, create a `<library-name>` sudirectory to contain the library's header files.
 3. Download the library's header files and add them to `external/<library-name>`.
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>` to the `INCLUDES` variable (line 28 of the Makefile).
+4. Add the library's header files to the preprocessor's search path: add `-isystem external/<library-name>` to the `INCLUDES` variable (line 28 of the Makefile).
 
 ### Library installed system-wide
 
@@ -426,7 +426,7 @@ Alternatively, if a library is not available in any package manager, you can bui
 
     You may instead prefer to add the library as a Git submodule inside the `external` directory to make updates easier.
 
-4. Add the library's header files to the preprocessor's search path: add `-Iexternal/<library-name>/include` to the `INCLUDES` variable (line 28 of the Makefile).
+4. Add the library's header files to the preprocessor's search path: add `-isystem /<library-name>/include` to the `INCLUDES` variable (line 28 of the Makefile).
 5. Add the library's compiled files to the linker's search path: add `-Lexternal/<library-name>/lib` to the `LDFLAGS` variable (line 40 of the Makefile).
 6. Link with the library: add `-l<library-name>` to the `LDLIBS` variable (line 44 of the Makefile).
 
@@ -478,18 +478,18 @@ Once this is done, running `make` (or `make all`) will now build both the execut
 
 The following table presents an overview of the most commonly changed settings of the Makefile:
 
-| Configuration                                                                                 | Variable                                       | Line       |
-|-----------------------------------------------------------------------------------------------|------------------------------------------------|------------|
-| Change the output executable name                                                             | `EXEC`                                         | 6          |
-| Select the C++ compiler (e.g. `g++` or `clang++`)                                             | `CXX`                                          | 35         |
-| Add preprocessor settings (e.g. `-D<macro-name>`)                                             | `CPPFLAGS`                                     | 32         |
-| Change C++ compiler settings (useful for setting the C++ standard version)                    | `CXXFLAGS`                                     | 36         |
-| Add/remove compiler warnings                                                                  | `WARNINGS`                                     | 37         |
-| Add includes for libraries common to all platforms (e.g. `-Iexternal/<library-name>/include`) | `INCLUDES`                                     | 28         |
-| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`) | `LDFLAGS`                                      | 40         |
-| Add libraries common to all platforms (e.g. `-l<library-name>`)                               | `LDLIBS`                                       | 44         |
-| Add includes/linker flags/libraries for specific platforms                                    | `INCLUDES`, `LDFLAGS`, `LDLIBS`                | 61-80      |
-| Add additional includes/linker flags/libraries for tests                                      | `TEST_INCLUDES`, `TEST_LDFLAGS`, `TEST_LDLIBS` | 29, 41, 45 |
+| Configuration                                                                                        | Variable                                       | Line       |
+|------------------------------------------------------------------------------------------------------|------------------------------------------------|------------|
+| Change the output executable name                                                                    | `EXEC`                                         | 6          |
+| Select the C++ compiler (e.g. `g++` or `clang++`)                                                    | `CXX`                                          | 35         |
+| Add preprocessor settings (e.g. `-D<macro-name>`)                                                    | `CPPFLAGS`                                     | 32         |
+| Change C++ compiler settings (useful for setting the C++ standard version)                           | `CXXFLAGS`                                     | 36         |
+| Add/remove compiler warnings                                                                         | `WARNINGS`                                     | 37         |
+| Add includes for libraries common to all platforms (e.g. `-isystem external/<library-name>/include`) | `INCLUDES`                                     | 28         |
+| Add linker flags for libraries common to all platforms (e.g. `-Lexternal/<library-name>/lib`)        | `LDFLAGS`                                      | 40         |
+| Add libraries common to all platforms (e.g. `-l<library-name>`)                                      | `LDLIBS`                                       | 44         |
+| Add includes/linker flags/libraries for specific platforms                                           | `INCLUDES`, `LDFLAGS`, `LDLIBS`                | 61-80      |
+| Add additional includes/linker flags/libraries for tests                                             | `TEST_INCLUDES`, `TEST_LDFLAGS`, `TEST_LDLIBS` | 29, 41, 45 |
 
 All the configurable options are defined between lines 1-80. For most uses, the Makefile should not need to be modified beyond line 80.
 
