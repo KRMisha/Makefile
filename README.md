@@ -295,8 +295,8 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
     [...]
 
     # Includes
-    INCLUDE_DIR = include
-    INCLUDES := -I$(INCLUDE_DIR) $(CONAN_INCLUDE_DIRS)
+    INCLUDE_DIR =
+    INCLUDES := $(addprefix -I,$(SRC_DIR) $(INCLUDE_DIR)) $(CONAN_INCLUDE_DIRS)
 
     # C preprocessor settings
     CPPFLAGS = $(INCLUDES) -MMD -MP $(CONAN_DEFINES)
@@ -507,7 +507,21 @@ Lines 61-80 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 
 > The common `INCLUDES` (line 28), `LDFLAGS` (line 40), and `LDLIBS` (line 44) variables should only contain options which are identical for all platforms. Any platform-specific options should instead be specified using lines 61-80.
 
-## Project hierarchy
+### Separate directories for headers and sources
+
+By default, your project's header files should be placed under `src`, next to their associated source files. Headers which are only used by tests should be placed under `tests`.
+
+However, if you wish to place your header files in a separate directory from your source files, you can do so by setting the `INCLUDE_DIR` variable (line 27 of the Makefile):
+
+```makefile
+INCLUDE_DIR = include
+```
+
+This will add the `include` directory to the preprocessor's search path.
+
+This can be useful when developing a library: in this configuration, your library's public headers should be placed under `include`, and its private headers under `src`.
+
+## Project layout
 
 ```text
 .
@@ -528,13 +542,15 @@ Lines 61-80 of the Makefile contain platform-specific `INCLUDES`, `LDFLAGS`, and
 ├── docs
 │   ├── Doxyfile
 │   └── **/*.html
-├── include
+├── include (optional)
 │   └── **/*.h
 ├── src
 │   ├── main.cpp
-│   └── **/*.cpp
+│   ├── **/*.cpp
+│   └── **/*.h
 ├── tests
-│   └── **/*.cpp
+│   ├── **/*.cpp
+│   └── **/*.h
 ├── .clang-format
 ├── .clang-tidy
 ├── .gitattributes
@@ -585,6 +601,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
 - [Configuration](#configuration)
     - [Frequently changed settings](#frequently-changed-settings)
     - [Platform-specific library configuration](#platform-specific-library-configuration)
-- [Project hierarchy](#project-hierarchy)
+    - [Separate directories for headers and sources](#separate-directories-for-headers-and-sources)
+- [Project layout](#project-layout)
 - [License](#license)
 - [Table of contents](#table-of-contents)
