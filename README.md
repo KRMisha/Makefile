@@ -218,7 +218,7 @@ make lint-fix
 
 Documentation can be generated from [documentation comments](https://www.doxygen.nl/manual/docblocks.html) using Doxygen.
 
-#### First time use
+#### First-time use
 
 1. Create a new `docs` directory at the root of the project.
 2. Generate a new Doxyfile in `docs/Doxyfile`:
@@ -600,7 +600,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
     - [Formatting](#formatting)
     - [Linting](#linting)
     - [Generating documentation](#generating-documentation)
-        - [First time use](#first-time-use)
+        - [First-time use](#first-time-use)
         - [Updating the documentation](#updating-the-documentation)
 - [Adding libraries](#adding-libraries)
     - [Using a package manager](#using-a-package-manager)
