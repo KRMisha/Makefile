@@ -269,6 +269,17 @@ You can integrate Conan with the Makefile by using the [MakeDeps generator](http
 
     The path of the generated profile can be found using `conan profile path default`. You can edit this file and set `compiler.cppstd` to your desired C++ standard (e.g. `compiler.cppstd=20`).
 
+    Note: on Windows, you should modify the default profile to use MinGW (GCC) instead of MSVC. Make the following changes to the default profile:
+
+    ```ini
+    compiler=gcc
+    compiler.cppstd=<desired C++ standard, e.g. 20>
+    compiler.libcxx=libstdc++11
+    compiler.version=<installed GCC version, e.g. 13>
+    ```
+
+    The `compiler.runtime` setting should be removed, as it is specific to MSVC.
+
 3. Create a `conanfile.txt` at the root of the project:
 
     ```ini
@@ -426,7 +437,7 @@ Relying on a system package manager for your libraries can make it less straight
 
     Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
-    Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
+    Note: on macOS, you may need to link your library using `-framework` rather than `-l`.
 
 ### Library built from source
 
@@ -444,7 +455,7 @@ Alternatively, if a library is not available in any package manager, you can bui
 
     Depending on the library, more than one library name may need to be added with the `-l` option. Refer to your library's documentation for the names to use with the `-l` option in this step.
 
-    Note: for macOS, you may need to link your library using `-framework` rather than `-l`.
+    Note: on macOS, you may need to link your library using `-framework` rather than `-l`.
 
 Note that the folder structure inside `external/<library-name>` will vary from one library to the next. In the above instructions:
 
