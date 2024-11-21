@@ -520,9 +520,9 @@ All the configurable options are defined between lines 1-80. For most uses, the 
 
 The section on [adding libraries](#adding-libraries) explains how to add a library using the common `INCLUDES`, `LDFLAGS`, and `LDLIBS` variables which are shared between all platforms. However, in some cases, a library may need to be linked differently by platform. Examples of such platform-specific library configurations include:
 
-- Adding a library needed only for code enabled on a certain platform
-- Using `-framework` over `-l` to link a library on macOS
-- Specifying a different path for a library's compiled files with `-L`
+- Adding a library needed only for code enabled on a certain platform.
+- Using `-framework` over `-l` to link a library on macOS.
+- Specifying a different path for a library's compiled files with `-L`.
 
 The Makefile is designed to support these kinds of platform-specific configurations alongside one another.
 
