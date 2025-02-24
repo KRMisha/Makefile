@@ -25,14 +25,15 @@ See the [table of contents](#table-of-contents) at the end.
 
 ## Prerequisites
 
-### GCC & Make
+### Make & GCC
 
 > Alternatively, Clang can be used instead of GCC (see [here](#using-a-different-compiler)). The instructions below will focus on GCC.
 
 - Linux:
     - Debian/Ubuntu: `sudo apt install build-essential`
-    - Fedora: `sudo dnf install gcc-c++ make`
-    - Arch: `sudo pacman -S base-devel`
+    - Fedora: `sudo dnf install make gcc-c++`
+    - openSUSE: `sudo zypper install make gcc-c++`
+    - Arch Linux: `sudo pacman -S make gcc`
 - macOS:
     1. Run the following command: `xcode-select --install`
     2. In the window which pops up, click "Install" and follow the instructions.
@@ -426,6 +427,7 @@ Some libraries can be installed system-wide, using your system's package manager
 - On macOS, using [Homebrew](https://brew.sh/) or [MacPorts](https://www.macports.org/)
 - On Debian/Ubuntu, using `apt`
 - On Fedora, using `dnf`
+- On openSUSE, using `zypper`
 - On Arch Linux, using `pacman`
 
 These system package managers install dependencies in a default system-wide directory, such as `/usr/lib` and `/usr/include` on Linux. Some important system-wide libraries may also come preinstalled on your system.
@@ -592,7 +594,7 @@ To comply with the terms of the MIT license in your project, simply copy-pasting
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-    - [GCC \& Make](#gcc--make)
+    - [Make \& GCC](#make--gcc)
     - [Optional dependencies](#optional-dependencies)
 - [Usage](#usage)
     - [Overview of commands](#overview-of-commands)
