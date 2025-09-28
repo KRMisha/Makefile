@@ -9,6 +9,7 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   google-explicit-constructor,
   misc-*,
+  -misc-header-include-cycle,
   modernize-*,
   -modernize-use-trailing-return-type,
   performance-*,
